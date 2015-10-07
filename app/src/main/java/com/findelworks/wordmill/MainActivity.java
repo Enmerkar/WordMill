@@ -12,6 +12,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import java.io.File;
+import android.database.sqlite.SQLiteOpenHelper;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import android.content.ContentValues;
+import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -23,15 +32,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -40,6 +40,16 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (!databaseExists()) {
+            LanguageSQLiteOpenHelper langHelper = new LanguageSQLiteOpenHelper(getBaseContext());
+            try {
+                populateDatabase(langHelper);
+            } catch (Exception e) {
+                // catch
+            }
+        }
+
     }
 
     @Override
@@ -80,17 +90,17 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_german) {
+            // Handle the action
+        } else if (id == R.id.nav_latin) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_add) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_profile) {
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_settings) {
 
         }
 
@@ -98,4 +108,56 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public boolean databaseExists() {
+        File database = getApplicationContext().getDatabasePath("Language.db");
+        return database.exists();
+    }
+
+    public void populateDatabase(LanguageSQLiteOpenHelper helper) {
+
+        AssetManager assetManager = this.getAssets();
+        InputStream isLang = assetManager.open("german_data.txt");
+        InputStream isUser = assetManager.open("german_user.txt");
+        BufferedReader brLang = new BufferedReader(new InputStreamReader(isLang));
+        BufferedReader brUser = new BufferedReader(new InputStreamReader(isUser));
+
+        // final String vocabTextFilePath = this.getResource("vocabulary.txt");
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues row = new ContentValues();
+
+        String inputLine;
+        String[] inputDataArray = new String[7];
+        int id, level, score;
+        String english, german, plural, genitive;
+        @SuppressWarnings("unused")
+        long rowID;
+
+        while ((inputLine = br.readLine()) != null) {
+
+            inputDataArray = inputLine.split("\t");
+
+            id = Integer.parseInt(inputDataArray[0]);
+            level = Integer.parseInt(inputDataArray[1]);
+            score = Integer.parseInt(inputDataArray[2]);
+            english = inputDataArray[3];
+            german = inputDataArray[4];
+            plural = inputDataArray[5];
+            genitive = inputDataArray[6];
+
+            row.put(VocabDbHelper.COLUMN_NAME_ID, id);
+            row.put(VocabDbHelper.COLUMN_NAME_LEVEL, level);
+            row.put(VocabDbHelper.COLUMN_NAME_SCORE, score);
+            row.put(VocabDbHelper.COLUMN_NAME_ENGLISH, english);
+            row.put(VocabDbHelper.COLUMN_NAME_GERMAN, german);
+            row.put(VocabDbHelper.COLUMN_NAME_PLURAL, plural);
+            row.put(VocabDbHelper.COLUMN_NAME_GENITIVE, genitive);
+
+            rowID = db.insert(VocabDbHelper.TABLE_NAME, null, row);
+        }
+
+        br.close();
+    }
+
 }

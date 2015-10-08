@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import java.io.File;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
@@ -21,6 +23,7 @@ import android.content.ContentValues;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.content.res.Resources;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -116,48 +119,113 @@ public class MainActivity extends AppCompatActivity
 
     public void populateDatabase(LanguageSQLiteOpenHelper helper) {
 
-        AssetManager assetManager = this.getAssets();
-        InputStream isLang = assetManager.open("german_data.txt");
-        InputStream isUser = assetManager.open("german_user.txt");
-        BufferedReader brLang = new BufferedReader(new InputStreamReader(isLang));
-        BufferedReader brUser = new BufferedReader(new InputStreamReader(isUser));
-
-        // final String vocabTextFilePath = this.getResource("vocabulary.txt");
-
+        Resources res = getResources();
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues row = new ContentValues();
 
-        String inputLine;
-        String[] inputDataArray = new String[7];
-        int id, level, score;
-        String english, german, plural, genitive;
-        @SuppressWarnings("unused")
+        boolean match;
+        String inputLineLang, inputLineUser;
+        String[] inputArrayLang = new String[5];
+        String[] inputArrayUser = new String[5];
+        int id_lang, id_user, freq, flevel, flapse, blevel, blapse;
+        String word, full, trans;
         long rowID;
 
-        while ((inputLine = br.readLine()) != null) {
+        // Repeat for each language
 
-            inputDataArray = inputLine.split("\t");
+            InputStream isLang = res.openRawResource(R.raw.german_data);
+            InputStream isUser = res.openRawResource(R.raw.german_user);
+            BufferedReader brLang = new BufferedReader(new InputStreamReader(isLang));
+            BufferedReader brUser = new BufferedReader(new InputStreamReader(isUser));
 
-            id = Integer.parseInt(inputDataArray[0]);
-            level = Integer.parseInt(inputDataArray[1]);
-            score = Integer.parseInt(inputDataArray[2]);
-            english = inputDataArray[3];
-            german = inputDataArray[4];
-            plural = inputDataArray[5];
-            genitive = inputDataArray[6];
+            match = false;
+            id_lang = id_user = freq = flevel = flapse = blevel = blapse = 0;
+            word = full = trans = null;
 
-            row.put(VocabDbHelper.COLUMN_NAME_ID, id);
-            row.put(VocabDbHelper.COLUMN_NAME_LEVEL, level);
-            row.put(VocabDbHelper.COLUMN_NAME_SCORE, score);
-            row.put(VocabDbHelper.COLUMN_NAME_ENGLISH, english);
-            row.put(VocabDbHelper.COLUMN_NAME_GERMAN, german);
-            row.put(VocabDbHelper.COLUMN_NAME_PLURAL, plural);
-            row.put(VocabDbHelper.COLUMN_NAME_GENITIVE, genitive);
+            try {
+                while ((inputLineUser = brUser.readLine()) != null) {
 
-            rowID = db.insert(VocabDbHelper.TABLE_NAME, null, row);
-        }
+                    inputArrayUser = inputLineUser.split("\t");
 
-        br.close();
+                    id_user = Integer.parseInt(inputArrayUser[0]);
+                    flevel = Integer.parseInt(inputArrayUser[1]);
+                    flapse = Integer.parseInt(inputArrayUser[2]);
+                    blevel = Integer.parseInt(inputArrayUser[3]);
+                    blapse = Integer.parseInt(inputArrayUser[4]);
+
+                    match = false;
+
+                    try {
+                        while (!match) {
+
+                            inputLineLang = brLang.readLine();
+                            inputArrayLang = inputLineUser.split("\t");
+
+                            id_lang = Integer.parseInt(inputArrayLang[0]);
+                            freq = Integer.parseInt(inputArrayLang[1]);
+                            word = inputArrayLang[2];
+                            full = inputArrayLang[3];
+                            trans = inputArrayLang[4];
+
+                            if (id_user == id_lang) {
+                                match = true;
+                                row.put(helper.COLUMN_FLEVEL, flevel);
+                                row.put(helper.COLUMN_FLAPSE, flapse);
+                                row.put(helper.COLUMN_BLEVEL, blevel);
+                                row.put(helper.COLUMN_BLAPSE, blapse);
+                            } else {
+                                row.put(helper.COLUMN_FLEVEL, 0);
+                                row.put(helper.COLUMN_FLAPSE, 0);
+                                row.put(helper.COLUMN_BLEVEL, 0);
+                                row.put(helper.COLUMN_BLAPSE, 0);
+                            }
+
+                            row.put(helper.COLUMN_ID, id_lang);
+                            row.put(helper.COLUMN_FREQ, freq);
+                            row.put(helper.COLUMN_WORD, word);
+                            row.put(helper.COLUMN_FULL, full);
+                            row.put(helper.COLUMN_TRANS, trans);
+
+                            rowID = db.insert(helper.TABLE_NAME_GERMAN, null, row);
+
+                        }
+
+                    } catch (IOException e) {
+
+                    }
+                }
+
+                // Copy in any trailing unattempted words into the database
+                while ((inputLineLang = brLang.readLine()) != null) {
+
+                    inputArrayLang = inputLineUser.split("\t");
+
+                    row.put(helper.COLUMN_ID, id_lang);
+                    row.put(helper.COLUMN_FREQ, freq);
+                    row.put(helper.COLUMN_WORD, word);
+                    row.put(helper.COLUMN_FULL, full);
+                    row.put(helper.COLUMN_TRANS, trans);
+                    row.put(helper.COLUMN_FLEVEL, 0);
+                    row.put(helper.COLUMN_FLAPSE, 0);
+                    row.put(helper.COLUMN_BLEVEL, 0);
+                    row.put(helper.COLUMN_BLAPSE, 0);
+
+                    rowID = db.insert(helper.TABLE_NAME_GERMAN, null, row);
+
+                }
+
+            } catch (IOException e) {
+
+            }
+
+            try {
+                brLang.close();
+                brUser.close();
+            } catch (IOException e) {
+
+            }
+
     }
 
 }
+

@@ -23,7 +23,7 @@ public class LanguageSQLiteOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_FREQ = "freq";
     public static final String COLUMN_WORD = "word";
     public static final String COLUMN_FULL = "full";
-    public static final String COLUMN_ENGLISH = "english";
+    public static final String COLUMN_TRANS = "trans";
 
     // User variables
     public static final String COLUMN_FLEVEL = "flevel";
@@ -36,7 +36,7 @@ public class LanguageSQLiteOpenHelper extends SQLiteOpenHelper {
                     COLUMN_FREQ + " INTEGER NOT NULL, " +
                     COLUMN_WORD + " TEXT NOT NULL, " +
                     COLUMN_FULL + " TEXT NOT NULL, " +
-                    COLUMN_ENGLISH + " TEXT NOT NULL, " +
+                    COLUMN_TRANS + " TEXT NOT NULL, " +
                     COLUMN_FLEVEL + " INTEGER, " +
                     COLUMN_FLAPSE + " INTEGER, " +
                     COLUMN_BLEVEL + " INTEGER, " +

@@ -16,7 +16,7 @@ public class LanguageSQLiteOpenHelper extends SQLiteOpenHelper {
 
     // Language table name variables
     public static final String TABLE_NAME_GERMAN = "german";
-    //public static final String TABLE_NAME_LATIN = "latin";
+    public static final String TABLE_NAME_LATIN = "latin";
 
     // Language information variables
     public static final String COLUMN_ID = "id";
@@ -49,12 +49,12 @@ public class LanguageSQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_NAME_GERMAN + CREATE_TABLE_VARIABLES);
-        //db.execSQL("CREATE TABLE " + TABLE_NAME_LATIN + CREATE_TABLE_VARIABLES);
+        db.execSQL("CREATE TABLE " + TABLE_NAME_LATIN + CREATE_TABLE_VARIABLES);
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_GERMAN);
-        //db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_LATIN);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME_LATIN);
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {

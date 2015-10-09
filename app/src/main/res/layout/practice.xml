@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin">
+
+    <TextView android:id="@+id/view_word"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="3" />
+
+    <TextView android:id="@+id/view_full"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="3" />
+
+    <TextView android:id="@+id/view_trans"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="6" />
+
+    <LinearLayout android:id="@+id/view_respond"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="6"
+        android:orientation="horizontal">
+
+        <TextView android:id="@+id/view_no"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <TextView android:id="@+id/view_yes"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <ImageView android:id="@+id/view_progress"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"/>
+
+</LinearLayout>

@@ -28,21 +28,45 @@ import android.database.sqlite.SQLiteDatabase;
 import android.content.res.Resources;
 import android.widget.Button;
 import android.widget.ImageView;
+import java.util.ArrayList;
+import android.database.sqlite.SQLiteQueryBuilder;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String GLOBAL_PREFERENCES = "GLOBAL_PREFERENCES";
-    private static final String CURRENT_LANGUAGE = "CURRENT_LANGUAGE";
+    private static final String ACTIVE_LANGUAGE = "ACTIVE_LANGUAGE";
 
     private static SharedPreferences global_preferences;
     private static String active_language;
+
+    private static final String GERMAN_PREFERENCES = "GERMAN_PREFERENCES";
+    private static final String GERMAN_BUCKET_SIZE = "GERMAN_BUCKET_SIZE";
+    private static final String GERMAN_MODE = "GERMAN_MODE";
+
+    private static SharedPreferences german_preferences;
+    private static int german_bucket_size;
+    private static int german_mode;
+
+    private static final String LATIN_PREFERENCES = "LATIN_PREFERENCES";
+    private static final String LATIN_BUCKET_SIZE = "LATIN_BUCKET_SIZE";
+    private static final String LATIN_MODE = "LATIN_MODE";
+
+    private static SharedPreferences latin_preferences;
+    private static int latin_bucket_size;
+    private static int latin_mode;
+
+    private static String table_name;
+    private static int bucket_size;
+    private static int round_mode;
 
     private static ViewStub language_stub;
     private static ViewStub practice_stub;
 
     private static boolean newGermanFile;
     private static boolean newLatinFile;
+
+    private static LanguageSQLiteOpenHelper langHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +91,12 @@ public class MainActivity extends AppCompatActivity
 
         // Get the language currently or last studied
         global_preferences = getSharedPreferences(GLOBAL_PREFERENCES, MODE_PRIVATE);
-        active_language = global_preferences.getString(CURRENT_LANGUAGE, null);
+        active_language = global_preferences.getString(ACTIVE_LANGUAGE, null);
+
+        german_preferences = getSharedPreferences(GERMAN_PREFERENCES, MODE_PRIVATE);
+        german_bucket_size = german_preferences.getInt(GERMAN_BUCKET_SIZE, 12);
+        german_mode = german_preferences.getInt(GERMAN_MODE, 0);
+
 
         // Ensure that the most up-to-date data files exist both locally and in cloud.
         updateDataFiles();
@@ -75,11 +104,11 @@ public class MainActivity extends AppCompatActivity
         // Create database from data files if a) it doesn't exist, or
         // b) new data files have been downloaded from the cloud.
         if (!databaseExists()) {
-            LanguageSQLiteOpenHelper langHelper = new LanguageSQLiteOpenHelper(getBaseContext());
+            langHelper = new LanguageSQLiteOpenHelper(getBaseContext());
             populateDatabase(langHelper, "GERMAN");
             populateDatabase(langHelper, "LATIN");
         } else {
-            LanguageSQLiteOpenHelper langHelper = new LanguageSQLiteOpenHelper(getBaseContext());
+            langHelper = new LanguageSQLiteOpenHelper(getBaseContext());
             if (newGermanFile) populateDatabase(langHelper, "GERMAN");
             if (newLatinFile) populateDatabase(langHelper, "LATIN");
         }
@@ -88,7 +117,7 @@ public class MainActivity extends AppCompatActivity
         Button practice_button = (Button) findViewById(R.id.begin_practice);
         practice_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                newRound(active_language);
+                newRound();
             }
         });
 
@@ -126,7 +155,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -149,7 +177,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         SharedPreferences.Editor editor = global_preferences.edit();
-        editor.putString(CURRENT_LANGUAGE, active_language);
+        editor.putString(ACTIVE_LANGUAGE, active_language);
         editor.apply();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -158,6 +186,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void changeLanguage(String language) {
+
+        switch (active_language) {
+            case "GERMAN":
+                table_name = langHelper.TABLE_NAME_GERMAN;
+                bucket_size = german_bucket_size;
+                round_mode = german_mode;
+                break;
+            case "LATIN":
+                table_name = langHelper.TABLE_NAME_LATIN;
+                bucket_size = latin_bucket_size;
+                round_mode = latin_mode;
+                break;
+            default: break;
+        }
+
         // Set heading
 
         // Set variables which define the status bar drawable
@@ -175,7 +218,7 @@ public class MainActivity extends AppCompatActivity
         super.onStop();
 
         SharedPreferences.Editor editor = global_preferences.edit();
-        editor.putString(CURRENT_LANGUAGE, active_language);
+        editor.putString(ACTIVE_LANGUAGE, active_language);
         editor.apply();
 
     }
@@ -330,8 +373,55 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void newRound(String language) {
-        // Get relevant words
+    public void newRound() {
+        // Get words by most lapsed
+        SQLiteDatabase langDatabase = langHelper.getReadableDatabase();
+        String lapseWordQuery = "SELECT * FROM " + table_name + " WHERE " + langHelper.COLUMN_FLEVEL + " > 0 ORDER BY " + langHelper.COLUMN_FLAPSE + " ASC LIMIT " + bucket_size;
+        Cursor lapseCursor = langDatabase.rawQuery(lapseWordQuery, null);
+
+        ArrayList<Integer> round_id = new ArrayList<Integer>();
+        ArrayList<Integer> round_freq = new ArrayList<Integer>();
+        ArrayList<String> round_word = new ArrayList<String>();
+        ArrayList<String> round_full = new ArrayList<String>();
+        ArrayList<String> round_trans = new ArrayList<String>();
+        ArrayList<Integer> round_flevel = new ArrayList<Integer>();
+        ArrayList<Integer> round_flapse = new ArrayList<Integer>();
+        ArrayList<Integer> round_blevel = new ArrayList<Integer>();
+        ArrayList<Integer> round_blapse = new ArrayList<Integer>();
+
+        lapseCursor.moveToFirst();
+        while (!lapseCursor.isAfterLast()) {
+            round_id.add(lapseCursor.getInt(0));
+            round_freq.add(lapseCursor.getInt(1));
+            round_word.add(lapseCursor.getString(2));
+            round_full.add(lapseCursor.getString(3));
+            round_trans.add(lapseCursor.getString(4));
+            round_flevel.add(lapseCursor.getInt(5));
+            round_flapse.add(lapseCursor.getInt(6));
+            round_blevel.add(lapseCursor.getInt(7));
+            round_blapse.add(lapseCursor.getInt(8));
+            lapseCursor.moveToNext();
+        }
+
+        int additional = bucket_size - round_id.size();
+        if (additional > 0) {
+            String newWordQuery = "SELECT * FROM " + table_name + " WHERE " + langHelper.COLUMN_FLEVEL + " = 0 ORDER BY " + langHelper.COLUMN_FREQ + " ASC LIMIT " + additional;
+            Cursor newCursor = langDatabase.rawQuery(newWordQuery, null);
+
+            newCursor.moveToFirst();
+            while (!newCursor.isAfterLast()) {
+                round_id.add(newCursor.getInt(0));
+                round_freq.add(newCursor.getInt(1));
+                round_word.add(newCursor.getString(2));
+                round_full.add(newCursor.getString(3));
+                round_trans.add(newCursor.getString(4));
+                round_flevel.add(newCursor.getInt(5));
+                round_flapse.add(newCursor.getInt(6));
+                round_blevel.add(newCursor.getInt(7));
+                round_blapse.add(newCursor.getInt(8));
+                newCursor.moveToNext();
+            }
+        }
 
         // Set text views in practice layout
 

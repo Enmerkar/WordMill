@@ -13,8 +13,17 @@
     tools:showIn="@layout/app_bar_main"
     tools:context=".MainActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello" />
+
     <Button android:id="@+id/begin_practice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
+<!--
+    <ImageView android:id="@+id/language_status_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+-->
 </LinearLayout>

@@ -5,4 +5,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="language_german">German</string>
+    <string name="language_latin">Latin</string>
+    <string name="language_add">Add New Language</string>
+
 </resources>

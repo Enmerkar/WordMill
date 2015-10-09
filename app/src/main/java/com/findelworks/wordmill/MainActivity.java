@@ -4,7 +4,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.LinearLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +27,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.res.Resources;
 import android.widget.Button;
+import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -35,6 +38,9 @@ public class MainActivity extends AppCompatActivity
     private static SharedPreferences global_preferences;
     private static String active_language;
 
+    private static ViewStub language_stub;
+    private static ViewStub practice_stub;
+
     private static boolean newGermanFile;
     private static boolean newLatinFile;
 
@@ -42,6 +48,11 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        language_stub = (ViewStub) findViewById(R.id.language_page);
+        practice_stub = (ViewStub) findViewById(R.id.practice_page);
+        practice_stub.setVisibility(View.INVISIBLE);
+        View inflated = language_stub.inflate();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -56,7 +67,7 @@ public class MainActivity extends AppCompatActivity
 
         // Get the language currently or last studied
         global_preferences = getSharedPreferences(GLOBAL_PREFERENCES, MODE_PRIVATE);
-        active_language = global_preferences.getString(CURRENT_LANGUAGE, "Nothing");
+        active_language = global_preferences.getString(CURRENT_LANGUAGE, null);
 
         // Ensure that the most up-to-date data files exist both locally and in cloud.
         updateDataFiles();
@@ -123,8 +134,10 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_german) {
             active_language = "GERMAN";
+            changeLanguage(active_language);
         } else if (id == R.id.nav_latin) {
             active_language = "LATIN";
+            changeLanguage(active_language);
         } else if (id == R.id.nav_add) {
 
         } else if (id == R.id.nav_profile) {
@@ -137,11 +150,18 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferences.Editor editor = global_preferences.edit();
         editor.putString(CURRENT_LANGUAGE, active_language);
-        editor.commit();
+        editor.apply();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void changeLanguage(String language) {
+        // Set heading
+
+        // Set variables which define the status bar drawable
+
     }
 
     @Override
@@ -156,7 +176,7 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferences.Editor editor = global_preferences.edit();
         editor.putString(CURRENT_LANGUAGE, active_language);
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -180,6 +200,7 @@ public class MainActivity extends AppCompatActivity
         newLatinFile = false;
     }
 
+    // Populates the database table for the specified language
     public void populateDatabase(LanguageSQLiteOpenHelper helper, String language) {
 
         int res_id_data = 0;
@@ -310,8 +331,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void newRound(String language) {
-        // Get relevant word
-        // Set practice.xml view
+        // Get relevant words
+
+        // Set text views in practice layout
+
+        // Inflate practice view
+        language_stub.setVisibility(View.INVISIBLE);
+        View inflated = practice_stub.inflate();
     }
 
 }

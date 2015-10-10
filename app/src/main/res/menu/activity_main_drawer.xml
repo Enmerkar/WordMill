@@ -14,7 +14,7 @@
         </menu>
     </item>
 
-    <item android:title="@string/app_name">
+    <item android:title="@string/umlaut">
         <menu>
             <item android:id="@+id/nav_profile" android:icon="@android:drawable/ic_menu_manage"
                 android:title="Profile" />

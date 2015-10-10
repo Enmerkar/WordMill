@@ -10,4 +10,10 @@
     <string name="language_latin">Latin</string>
     <string name="language_add">Add New Language</string>
 
+    <string name="round_complete">Round Complete</string>
+    <string name="words_passed">Reinforced: </string>
+    <string name="words_failed">Revised: </string>
+
+    <string name="umlaut">&#x2E1A;</string>
+
 </resources>

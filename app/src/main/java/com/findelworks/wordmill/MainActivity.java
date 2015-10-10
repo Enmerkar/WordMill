@@ -22,12 +22,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.util.Collections;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.content.res.Resources;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import java.util.ArrayList;
 import android.database.sqlite.SQLiteQueryBuilder;
 
@@ -36,29 +38,36 @@ public class MainActivity extends AppCompatActivity
 
     private static final String GLOBAL_PREFERENCES = "GLOBAL_PREFERENCES";
     private static final String ACTIVE_LANGUAGE = "ACTIVE_LANGUAGE";
+    private static final String FIBONACCI_MODE = "FIBONACCI_MODE";
+    private static final String PRIME_MODE = "PRIME_MODE";
+    private static final String ODD_MODE = "ODD_MODE";
+
+    private static final String GERMAN_LANGUAGE = "GERMAN";
+    private static final String GERMAN_PREFERENCES = "GERMAN_PREFERENCES";
+    private static final String GERMAN_DIRECTION = "GERMAN_DIRECTION";
+    private static final String GERMAN_BUCKET_SIZE = "GERMAN_BUCKET_SIZE";
+    private static final String GERMAN_LAPSE_MODE = "GERMAN_LAPSE_MODE";
+
+    private static final String LATIN_LANGUAGE = "LATIN";
+    private static final String LATIN_PREFERENCES = "LATIN_PREFERENCES";
+    private static final String LATIN_DIRECTION = "LATIN_DIRECTION";
+    private static final String LATIN_BUCKET_SIZE = "LATIN_BUCKET_SIZE";
+    private static final String LATIN_LAPSE_MODE = "LATIN_LAPSE_MODE";
 
     private static SharedPreferences global_preferences;
-    private static String active_language;
-
-    private static final String GERMAN_PREFERENCES = "GERMAN_PREFERENCES";
-    private static final String GERMAN_BUCKET_SIZE = "GERMAN_BUCKET_SIZE";
-    private static final String GERMAN_MODE = "GERMAN_MODE";
-
     private static SharedPreferences german_preferences;
-    private static int german_bucket_size;
-    private static int german_mode;
-
-    private static final String LATIN_PREFERENCES = "LATIN_PREFERENCES";
-    private static final String LATIN_BUCKET_SIZE = "LATIN_BUCKET_SIZE";
-    private static final String LATIN_MODE = "LATIN_MODE";
-
     private static SharedPreferences latin_preferences;
-    private static int latin_bucket_size;
-    private static int latin_mode;
 
+    private static String active_language;
     private static String table_name;
+
+    private static int language_mode;
     private static int bucket_size;
-    private static int round_mode;
+    private static String lapse_mode;
+
+    private static LanguageSQLiteOpenHelper langHelper;
+    private static SQLiteDatabase writableDatabase;
+    private static SQLiteDatabase readableDatabase;
 
     private static ViewStub language_stub;
     private static ViewStub practice_stub;
@@ -66,7 +75,37 @@ public class MainActivity extends AppCompatActivity
     private static boolean newGermanFile;
     private static boolean newLatinFile;
 
-    private static LanguageSQLiteOpenHelper langHelper;
+    private static TextView main_message;
+    private static TextView main_passed;
+    private static TextView main_failed;
+    private static TextView word_view;
+    private static TextView full_view;
+    private static TextView blank_view;
+    private static TextView trans_view;
+    private static LinearLayout check_view;
+    private static LinearLayout respond_view;
+
+    private static ArrayList<Integer> round_id;
+    private static ArrayList<Integer> round_freq;
+    private static ArrayList<String> round_word;
+    private static ArrayList<String> round_full;
+    private static ArrayList<String> round_trans;
+    private static ArrayList<Integer> round_flevel;
+    private static ArrayList<Integer> round_flapse;
+    private static ArrayList<Integer> round_blevel;
+    private static ArrayList<Integer> round_blapse;
+
+    private static ArrayList<Integer> round_shuffled;
+    private static int yes_count;
+    private static int no_count;
+
+    private static int current_id;
+    private static int current_flevel;
+    private static int current_blevel;
+
+    private static int[] fibonacci = {1,2,3,5,8,13,21,34,55,89,144,233};
+    private static int[] prime = {1,2,3,5,7,11,13,17,19,29,23,31};
+    private static int[] odd = {1,3,5,7,9,11,13,15,17,19,21,23};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,14 +128,21 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // Get the language currently or last studied
+        // Set preference variables
         global_preferences = getSharedPreferences(GLOBAL_PREFERENCES, MODE_PRIVATE);
-        active_language = global_preferences.getString(ACTIVE_LANGUAGE, null);
-
         german_preferences = getSharedPreferences(GERMAN_PREFERENCES, MODE_PRIVATE);
-        german_bucket_size = german_preferences.getInt(GERMAN_BUCKET_SIZE, 12);
-        german_mode = german_preferences.getInt(GERMAN_MODE, 0);
+        latin_preferences = getSharedPreferences(LATIN_PREFERENCES, MODE_PRIVATE);
 
+        // Set view variables
+        main_message = (TextView) findViewById(R.id.main_message);
+        main_passed = (TextView) findViewById(R.id.main_passed);
+        main_failed = (TextView) findViewById(R.id.main_failed);
+        word_view = (TextView) findViewById(R.id.view_word);
+        full_view = (TextView) findViewById(R.id.view_full);
+        blank_view = (TextView) findViewById(R.id.view_blank);
+        trans_view = (TextView) findViewById(R.id.view_trans);
+        check_view = (LinearLayout) findViewById(R.id.view_check);
+        respond_view = (LinearLayout) findViewById(R.id.view_respond);
 
         // Ensure that the most up-to-date data files exist both locally and in cloud.
         updateDataFiles();
@@ -105,19 +151,55 @@ public class MainActivity extends AppCompatActivity
         // b) new data files have been downloaded from the cloud.
         if (!databaseExists()) {
             langHelper = new LanguageSQLiteOpenHelper(getBaseContext());
-            populateDatabase(langHelper, "GERMAN");
-            populateDatabase(langHelper, "LATIN");
+            populateDatabase(GERMAN_LANGUAGE);
+            populateDatabase(LATIN_LANGUAGE);
         } else {
             langHelper = new LanguageSQLiteOpenHelper(getBaseContext());
-            if (newGermanFile) populateDatabase(langHelper, "GERMAN");
-            if (newLatinFile) populateDatabase(langHelper, "LATIN");
+            if (newGermanFile) populateDatabase(GERMAN_LANGUAGE);
+            if (newLatinFile) populateDatabase(LATIN_LANGUAGE);
         }
 
-        // Button to begin a practice round
-        Button practice_button = (Button) findViewById(R.id.begin_practice);
-        practice_button.setOnClickListener(new View.OnClickListener() {
+        // Restore previously active language
+        active_language = global_preferences.getString(ACTIVE_LANGUAGE, null);
+        changeLanguage(active_language);
+
+        // Click listener for begin new round button
+        Button begin_round = (Button) findViewById(R.id.begin_round);
+        begin_round.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                newRound();
+                beginRound();
+            }
+        });
+
+        // Click listener for reverse direction button
+        Button reverse_button = (Button) findViewById(R.id.reverse_button);
+        reverse_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                reverseDirection();
+            }
+        });
+
+        // Click listener for check button
+        Button check_button = (Button) findViewById(R.id.button_check);
+        check_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                checkWord();
+            }
+        });
+
+        // Click listener for no button
+        Button no_button = (Button) findViewById(R.id.button_no);
+        no_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onUserRespond(false);
+            }
+        });
+
+        // Click listener for yes button
+        Button yes_button = (Button) findViewById(R.id.button_yes);
+        yes_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onUserRespond(true);
             }
         });
 
@@ -160,25 +242,15 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_german) {
-            active_language = "GERMAN";
-            changeLanguage(active_language);
-        } else if (id == R.id.nav_latin) {
-            active_language = "LATIN";
-            changeLanguage(active_language);
-        } else if (id == R.id.nav_add) {
-
-        } else if (id == R.id.nav_profile) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_settings) {
-
+        switch (id) {
+            case R.id.nav_german: changeLanguage(GERMAN_LANGUAGE); break;
+            case R.id.nav_latin: changeLanguage(LATIN_LANGUAGE); break;
+            case R.id.nav_add: break;
+            case R.id.nav_profile: break;
+            case R.id.nav_share: break;
+            case R.id.nav_settings: break;
+            default: break;
         }
-
-        SharedPreferences.Editor editor = global_preferences.edit();
-        editor.putString(ACTIVE_LANGUAGE, active_language);
-        editor.apply();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -188,18 +260,26 @@ public class MainActivity extends AppCompatActivity
     public void changeLanguage(String language) {
 
         switch (active_language) {
-            case "GERMAN":
-                table_name = langHelper.TABLE_NAME_GERMAN;
-                bucket_size = german_bucket_size;
-                round_mode = german_mode;
+            case GERMAN_LANGUAGE:
+                active_language = GERMAN_LANGUAGE;
+                table_name = LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN;
+                language_mode = german_preferences.getInt(GERMAN_DIRECTION, 0);
+                bucket_size = german_preferences.getInt(GERMAN_BUCKET_SIZE, 12);
+                lapse_mode = german_preferences.getString(GERMAN_LAPSE_MODE, FIBONACCI_MODE);
                 break;
-            case "LATIN":
-                table_name = langHelper.TABLE_NAME_LATIN;
-                bucket_size = latin_bucket_size;
-                round_mode = latin_mode;
+            case LATIN_LANGUAGE:
+                active_language = LATIN_LANGUAGE;
+                table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
+                language_mode = latin_preferences.getInt(LATIN_DIRECTION, 0);
+                bucket_size = latin_preferences.getInt(LATIN_BUCKET_SIZE, 12);
+                lapse_mode = latin_preferences.getString(LATIN_LAPSE_MODE, FIBONACCI_MODE);
                 break;
             default: break;
         }
+
+        SharedPreferences.Editor editor = global_preferences.edit();
+        editor.putString(ACTIVE_LANGUAGE, active_language);
+        editor.apply();
 
         // Set heading
 
@@ -216,10 +296,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-
-        SharedPreferences.Editor editor = global_preferences.edit();
-        editor.putString(ACTIVE_LANGUAGE, active_language);
-        editor.apply();
 
     }
 
@@ -244,7 +320,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     // Populates the database table for the specified language
-    public void populateDatabase(LanguageSQLiteOpenHelper helper, String language) {
+    public void populateDatabase(String language) {
 
         int res_id_data = 0;
         int res_id_user = 0;
@@ -254,21 +330,21 @@ public class MainActivity extends AppCompatActivity
             case "GERMAN":
                 res_id_data = R.raw.german_data;
                 res_id_user = R.raw.german_user;
-                table_name = helper.TABLE_NAME_GERMAN;
+                table_name = LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN;
                 break;
             case "LATIN":
                 res_id_data = R.raw.latin_data;
                 res_id_user = R.raw.latin_user;
-                table_name = helper.TABLE_NAME_LATIN;
+                table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
                 break;
             default: break;
         }
 
         Resources res = getResources();
-        SQLiteDatabase db = helper.getWritableDatabase();
+        writableDatabase = langHelper.getWritableDatabase();
 
         // Clear table of old data
-        db.execSQL("DELETE * FROM " + table_name);
+        writableDatabase.execSQL("DELETE * FROM " + table_name);
 
         boolean match;
         String inputLineLang, inputLineUser;
@@ -315,24 +391,24 @@ public class MainActivity extends AppCompatActivity
 
                         if (id_user == id_lang) {
                             match = true;
-                            row.put(helper.COLUMN_FLEVEL, flevel);
-                            row.put(helper.COLUMN_FLAPSE, flapse);
-                            row.put(helper.COLUMN_BLEVEL, blevel);
-                            row.put(helper.COLUMN_BLAPSE, blapse);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_FLEVEL, flevel);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_FLAPSE, flapse);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_BLEVEL, blevel);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_BLAPSE, blapse);
                         } else {
-                            row.put(helper.COLUMN_FLEVEL, 0);
-                            row.put(helper.COLUMN_FLAPSE, 0);
-                            row.put(helper.COLUMN_BLEVEL, 0);
-                            row.put(helper.COLUMN_BLAPSE, 0);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_FLEVEL, 0);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_FLAPSE, 0);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_BLEVEL, 0);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_BLAPSE, 0);
                         }
 
-                        row.put(helper.COLUMN_ID, id_lang);
-                        row.put(helper.COLUMN_FREQ, freq);
-                        row.put(helper.COLUMN_WORD, word);
-                        row.put(helper.COLUMN_FULL, full);
-                        row.put(helper.COLUMN_TRANS, trans);
+                        row.put(LanguageSQLiteOpenHelper.COLUMN_ID, id_lang);
+                        row.put(LanguageSQLiteOpenHelper.COLUMN_FREQ, freq);
+                        row.put(LanguageSQLiteOpenHelper.COLUMN_WORD, word);
+                        row.put(LanguageSQLiteOpenHelper.COLUMN_FULL, full);
+                        row.put(LanguageSQLiteOpenHelper.COLUMN_TRANS, trans);
 
-                        rowID = db.insert(table_name, null, row);
+                        rowID = writableDatabase.insert(table_name, null, row);
 
                     }
 
@@ -346,17 +422,17 @@ public class MainActivity extends AppCompatActivity
 
                 inputArrayLang = inputLineUser.split("\t");
 
-                row.put(helper.COLUMN_ID, id_lang);
-                row.put(helper.COLUMN_FREQ, freq);
-                row.put(helper.COLUMN_WORD, word);
-                row.put(helper.COLUMN_FULL, full);
-                row.put(helper.COLUMN_TRANS, trans);
-                row.put(helper.COLUMN_FLEVEL, 0);
-                row.put(helper.COLUMN_FLAPSE, 0);
-                row.put(helper.COLUMN_BLEVEL, 0);
-                row.put(helper.COLUMN_BLAPSE, 0);
+                row.put(LanguageSQLiteOpenHelper.COLUMN_ID, id_lang);
+                row.put(LanguageSQLiteOpenHelper.COLUMN_FREQ, freq);
+                row.put(LanguageSQLiteOpenHelper.COLUMN_WORD, word);
+                row.put(LanguageSQLiteOpenHelper.COLUMN_FULL, full);
+                row.put(LanguageSQLiteOpenHelper.COLUMN_TRANS, trans);
+                row.put(LanguageSQLiteOpenHelper.COLUMN_FLEVEL, 0);
+                row.put(LanguageSQLiteOpenHelper.COLUMN_FLAPSE, 0);
+                row.put(LanguageSQLiteOpenHelper.COLUMN_BLEVEL, 0);
+                row.put(LanguageSQLiteOpenHelper.COLUMN_BLAPSE, 0);
 
-                rowID = db.insert(table_name, null, row);
+                rowID = writableDatabase.insert(table_name, null, row);
 
             }
 
@@ -371,23 +447,35 @@ public class MainActivity extends AppCompatActivity
 
         }
 
+        writableDatabase.close();
+
     }
 
-    public void newRound() {
-        // Get words by most lapsed
-        SQLiteDatabase langDatabase = langHelper.getReadableDatabase();
-        String lapseWordQuery = "SELECT * FROM " + table_name + " WHERE " + langHelper.COLUMN_FLEVEL + " > 0 ORDER BY " + langHelper.COLUMN_FLAPSE + " ASC LIMIT " + bucket_size;
-        Cursor lapseCursor = langDatabase.rawQuery(lapseWordQuery, null);
+    public void beginRound() {
 
-        ArrayList<Integer> round_id = new ArrayList<Integer>();
-        ArrayList<Integer> round_freq = new ArrayList<Integer>();
-        ArrayList<String> round_word = new ArrayList<String>();
-        ArrayList<String> round_full = new ArrayList<String>();
-        ArrayList<String> round_trans = new ArrayList<String>();
-        ArrayList<Integer> round_flevel = new ArrayList<Integer>();
-        ArrayList<Integer> round_flapse = new ArrayList<Integer>();
-        ArrayList<Integer> round_blevel = new ArrayList<Integer>();
-        ArrayList<Integer> round_blapse = new ArrayList<Integer>();
+        yes_count = no_count = 0;
+
+        // Get words by most lapsed
+        writableDatabase = langHelper.getWritableDatabase();
+        String lapseWordQuery = null;
+
+        if (language_mode == 0) {
+            lapseWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " ASC LIMIT " + bucket_size;
+        } else {
+            lapseWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " ASC LIMIT " + bucket_size;
+        }
+
+        Cursor lapseCursor = writableDatabase.rawQuery(lapseWordQuery, null);
+
+        round_id = new ArrayList<Integer>();
+        round_freq = new ArrayList<Integer>();
+        round_word = new ArrayList<String>();
+        round_full = new ArrayList<String>();
+        round_trans = new ArrayList<String>();
+        round_flevel = new ArrayList<Integer>();
+        round_flapse = new ArrayList<Integer>();
+        round_blevel = new ArrayList<Integer>();
+        round_blapse = new ArrayList<Integer>();
 
         lapseCursor.moveToFirst();
         while (!lapseCursor.isAfterLast()) {
@@ -403,10 +491,22 @@ public class MainActivity extends AppCompatActivity
             lapseCursor.moveToNext();
         }
 
+        lapseCursor.close();
+
         int additional = bucket_size - round_id.size();
         if (additional > 0) {
-            String newWordQuery = "SELECT * FROM " + table_name + " WHERE " + langHelper.COLUMN_FLEVEL + " = 0 ORDER BY " + langHelper.COLUMN_FREQ + " ASC LIMIT " + additional;
-            Cursor newCursor = langDatabase.rawQuery(newWordQuery, null);
+
+            String newWordQuery = null;
+
+            if (language_mode == 0) {
+                newWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL +
+                        " = 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_FREQ + " ASC LIMIT " + additional;
+            } else {
+                newWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL +
+                        " = 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_FREQ + " ASC LIMIT " + additional;
+            }
+
+            Cursor newCursor = writableDatabase.rawQuery(newWordQuery, null);
 
             newCursor.moveToFirst();
             while (!newCursor.isAfterLast()) {
@@ -421,13 +521,136 @@ public class MainActivity extends AppCompatActivity
                 round_blapse.add(newCursor.getInt(8));
                 newCursor.moveToNext();
             }
+
+            newCursor.close();
+
         }
 
-        // Set text views in practice layout
+        round_shuffled = new ArrayList<Integer>();
+        for (int i = 0; i < round_id.size(); i++) {
+            round_shuffled.add(i);
+        }
+        Collections.shuffle(round_shuffled);
 
         // Inflate practice view
-        language_stub.setVisibility(View.INVISIBLE);
+        language_stub.setVisibility(View.GONE);
         View inflated = practice_stub.inflate();
+
+        if (round_shuffled.size() > 0) {
+            askWord();
+        } else {
+            writableDatabase.close();
+        }
+
+    }
+
+    public static void askWord () {
+
+        check_view.setVisibility(View.VISIBLE);
+        respond_view.setVisibility(View.GONE);
+        blank_view.setVisibility(View.VISIBLE);
+        trans_view.setVisibility(View.GONE);
+
+        int i = round_shuffled.get(0);
+        round_shuffled.remove(0);
+
+        word_view.setText(round_word.get(i));
+        full_view.setText(round_full.get(i));
+        trans_view.setText(round_trans.get(i));
+
+        current_id = round_id.get(i);
+        current_flevel = round_flevel.get(i);
+        current_blevel = round_blevel.get(i);
+
+    }
+
+    public static void checkWord () {
+
+        check_view.setVisibility(View.GONE);
+        respond_view.setVisibility(View.VISIBLE);
+        blank_view.setVisibility(View.GONE);
+        trans_view.setVisibility(View.VISIBLE);
+
+    }
+
+    public static void onUserRespond (boolean known) {
+
+        int new_flevel, new_flapse, new_blevel, new_blapse;
+        String updateQuery = null;
+
+        if (language_mode == 0) {
+            if (known) {
+                yes_count++;
+                new_flevel = current_flevel - 1;
+                new_flapse = getLapse(new_flevel);
+                updateQuery = "UDPATE SET " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " = " + new_flevel + ", " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " = " + new_flapse
+                        + " FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_ID + " = " + current_id;
+            } else {
+                no_count++;
+                new_flevel = current_flevel + 1;
+                new_flapse = getLapse(new_flevel);
+                updateQuery = "UDPATE SET " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " = " + new_flevel + ", " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " = " + new_flapse
+                        + " FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_ID + " = " + current_id;
+            }
+        } else {
+            if (known) {
+                yes_count++;
+                new_blevel = current_blevel - 1;
+                new_blapse = getLapse(new_blevel);
+                updateQuery = "UDPATE SET " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " = " + new_blevel + ", " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " = " + new_blapse
+                        + " FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_ID + " = " + current_id;
+            } else {
+                no_count++;
+                new_blevel = current_blevel + 1;
+                new_blapse = getLapse(new_blevel);
+                updateQuery = "UDPATE SET " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " = " + new_blevel + ", " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " = " + new_blapse
+                        + " FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_ID + " = " + current_id;
+            }
+        }
+
+        writableDatabase.execSQL(updateQuery);
+
+        if (round_shuffled.size() > 0) {
+            askWord();
+        } else {
+            endRound();
+        }
+
+    }
+
+    public static void endRound() {
+
+        main_message.setText(R.string.round_complete);
+        main_passed.setText(R.string.words_passed + yes_count);
+        main_failed.setText(R.string.words_failed + no_count);
+
+
+
+        writableDatabase.close();
+
+        // Inflate language view
+        practice_stub.setVisibility(View.GONE);
+        View inflated = language_stub.inflate();
+
+    }
+
+    public static int getLapse (int level) {
+
+        switch (lapse_mode) {
+            case PRIME_MODE: return prime[level-1];
+            case ODD_MODE: return odd[level-1];
+            default: return fibonacci[level-1];
+        }
+
+    }
+
+    public static boolean languageBackupText () {
+
+        readableDatabase = langHelper.getReadableDatabase();
+        String createViewQuery = "CREATE VIEW ordered_table AS SELECT * FROM " +
+                LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN + " ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_ID;
+
+        return true;
     }
 
 }

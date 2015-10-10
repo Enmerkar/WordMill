@@ -1,7 +1,10 @@
-1	1	der Baum    die Bäume, des Baumes   tree
-2	1	das Meer    die Meere, des Meeres   sea
+1	1	der Baum    äu-e, -es   tree
+2	1	das Meer    -e, -es   sea
 3	1	die Frau    die Frauen, der Frau    woman
 4	2	das Auto    die Autos, des Autos    car
 5	2	der Mensch  die Menschen, des Menschen  human
 6	3	die Tasse   die Tassen, der Tasse   cup
-7	4	fahren  fährt, gefahren travel
+7	4	fahren  fährt, fuhr, ist gefahren   travel
+8   5   verlegen    verlegt, hat verlegt    to move, shift
+9   6   verlegen        embarassed
+10  7   gehen   ging, ist gegangen  to go

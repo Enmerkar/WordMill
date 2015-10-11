@@ -10,6 +10,8 @@
     <string name="language_latin">Latin</string>
     <string name="language_add">Add New Language</string>
 
+    <string name="begin_round_button">Begin Round</string>
+
     <string name="round_complete">Round Complete</string>
     <string name="words_passed">Reinforced: </string>
     <string name="words_failed">Revised: </string>

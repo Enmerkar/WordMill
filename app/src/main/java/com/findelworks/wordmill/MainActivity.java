@@ -1,5 +1,6 @@
 package com.findelworks.wordmill;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,13 +17,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import java.io.BufferedWriter;
 import java.io.File;
 import android.database.sqlite.SQLiteOpenHelper;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Collections;
+import android.text.TextUtils;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -206,6 +214,24 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -287,21 +313,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void reverseDirection() {
 
     }
 
@@ -323,18 +335,18 @@ public class MainActivity extends AppCompatActivity
     public void populateDatabase(String language) {
 
         int res_id_data = 0;
-        int res_id_user = 0;
-        String table_name = "NONE";
+        String file_user = null;
+        String table_name = null;
 
         switch (language) {
             case "GERMAN":
                 res_id_data = R.raw.german_data;
-                res_id_user = R.raw.german_user;
+                file_user = "german_user.txt";
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN;
                 break;
             case "LATIN":
                 res_id_data = R.raw.latin_data;
-                res_id_user = R.raw.latin_user;
+                file_user = "latin_user.txt";
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
                 break;
             default: break;
@@ -354,96 +366,101 @@ public class MainActivity extends AppCompatActivity
         String word, full, trans;
         long rowID;
 
-        ContentValues row = new ContentValues();
-        InputStream isLang = res.openRawResource(res_id_data);
-        InputStream isUser = res.openRawResource(res_id_user);
-        BufferedReader brLang = new BufferedReader(new InputStreamReader(isLang));
-        BufferedReader brUser = new BufferedReader(new InputStreamReader(isUser));
-
-        match = false;
-        id_lang = id_user = freq = flevel = flapse = blevel = blapse = 0;
-        word = full = trans = null;
-
         try {
-            while ((inputLineUser = brUser.readLine()) != null) {
+            InputStream is = res.openRawResource(res_id_data);
+            FileInputStream fis = openFileInput(file_user);
+            BufferedReader brLang = new BufferedReader(new InputStreamReader(is));
+            BufferedReader brUser = new BufferedReader(new InputStreamReader(fis));
 
-                inputArrayUser = inputLineUser.split("\t");
+            ContentValues row = new ContentValues();
 
-                id_user = Integer.parseInt(inputArrayUser[0]);
-                flevel = Integer.parseInt(inputArrayUser[1]);
-                flapse = Integer.parseInt(inputArrayUser[2]);
-                blevel = Integer.parseInt(inputArrayUser[3]);
-                blapse = Integer.parseInt(inputArrayUser[4]);
+            match = false;
+            id_lang = id_user = freq = flevel = flapse = blevel = blapse = 0;
+            word = full = trans = null;
 
-                match = false;
+            try {
+                while ((inputLineUser = brUser.readLine()) != null) {
 
-                try {
-                    while (!match) {
+                    inputArrayUser = inputLineUser.split("\t");
 
-                        inputLineLang = brLang.readLine();
-                        inputArrayLang = inputLineUser.split("\t");
+                    id_user = Integer.parseInt(inputArrayUser[0]);
+                    flevel = Integer.parseInt(inputArrayUser[1]);
+                    flapse = Integer.parseInt(inputArrayUser[2]);
+                    blevel = Integer.parseInt(inputArrayUser[3]);
+                    blapse = Integer.parseInt(inputArrayUser[4]);
 
-                        id_lang = Integer.parseInt(inputArrayLang[0]);
-                        freq = Integer.parseInt(inputArrayLang[1]);
-                        word = inputArrayLang[2];
-                        full = inputArrayLang[3];
-                        trans = inputArrayLang[4];
+                    match = false;
 
-                        if (id_user == id_lang) {
-                            match = true;
-                            row.put(LanguageSQLiteOpenHelper.COLUMN_FLEVEL, flevel);
-                            row.put(LanguageSQLiteOpenHelper.COLUMN_FLAPSE, flapse);
-                            row.put(LanguageSQLiteOpenHelper.COLUMN_BLEVEL, blevel);
-                            row.put(LanguageSQLiteOpenHelper.COLUMN_BLAPSE, blapse);
-                        } else {
-                            row.put(LanguageSQLiteOpenHelper.COLUMN_FLEVEL, 0);
-                            row.put(LanguageSQLiteOpenHelper.COLUMN_FLAPSE, 0);
-                            row.put(LanguageSQLiteOpenHelper.COLUMN_BLEVEL, 0);
-                            row.put(LanguageSQLiteOpenHelper.COLUMN_BLAPSE, 0);
+                    try {
+                        while (!match) {
+
+                            inputLineLang = brLang.readLine();
+                            inputArrayLang = inputLineUser.split("\t");
+
+                            id_lang = Integer.parseInt(inputArrayLang[0]);
+                            freq = Integer.parseInt(inputArrayLang[1]);
+                            word = inputArrayLang[2];
+                            full = inputArrayLang[3];
+                            trans = inputArrayLang[4];
+
+                            if (id_user == id_lang) {
+                                match = true;
+                                row.put(LanguageSQLiteOpenHelper.COLUMN_FLEVEL, flevel);
+                                row.put(LanguageSQLiteOpenHelper.COLUMN_FLAPSE, flapse);
+                                row.put(LanguageSQLiteOpenHelper.COLUMN_BLEVEL, blevel);
+                                row.put(LanguageSQLiteOpenHelper.COLUMN_BLAPSE, blapse);
+                            } else {
+                                row.put(LanguageSQLiteOpenHelper.COLUMN_FLEVEL, 0);
+                                row.put(LanguageSQLiteOpenHelper.COLUMN_FLAPSE, 0);
+                                row.put(LanguageSQLiteOpenHelper.COLUMN_BLEVEL, 0);
+                                row.put(LanguageSQLiteOpenHelper.COLUMN_BLAPSE, 0);
+                            }
+
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_ID, id_lang);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_FREQ, freq);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_WORD, word);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_FULL, full);
+                            row.put(LanguageSQLiteOpenHelper.COLUMN_TRANS, trans);
+
+                            rowID = writableDatabase.insert(table_name, null, row);
+
                         }
 
-                        row.put(LanguageSQLiteOpenHelper.COLUMN_ID, id_lang);
-                        row.put(LanguageSQLiteOpenHelper.COLUMN_FREQ, freq);
-                        row.put(LanguageSQLiteOpenHelper.COLUMN_WORD, word);
-                        row.put(LanguageSQLiteOpenHelper.COLUMN_FULL, full);
-                        row.put(LanguageSQLiteOpenHelper.COLUMN_TRANS, trans);
-
-                        rowID = writableDatabase.insert(table_name, null, row);
+                    } catch (IOException e) {
 
                     }
+                }
 
-                } catch (IOException e) {
+                // Copy in any trailing unattempted words into the database
+                while ((inputLineLang = brLang.readLine()) != null) {
+
+                    inputArrayLang = inputLineUser.split("\t");
+
+                    row.put(LanguageSQLiteOpenHelper.COLUMN_ID, id_lang);
+                    row.put(LanguageSQLiteOpenHelper.COLUMN_FREQ, freq);
+                    row.put(LanguageSQLiteOpenHelper.COLUMN_WORD, word);
+                    row.put(LanguageSQLiteOpenHelper.COLUMN_FULL, full);
+                    row.put(LanguageSQLiteOpenHelper.COLUMN_TRANS, trans);
+                    row.put(LanguageSQLiteOpenHelper.COLUMN_FLEVEL, 0);
+                    row.put(LanguageSQLiteOpenHelper.COLUMN_FLAPSE, 0);
+                    row.put(LanguageSQLiteOpenHelper.COLUMN_BLEVEL, 0);
+                    row.put(LanguageSQLiteOpenHelper.COLUMN_BLAPSE, 0);
+
+                    rowID = writableDatabase.insert(table_name, null, row);
 
                 }
-            }
 
-            // Copy in any trailing unattempted words into the database
-            while ((inputLineLang = brLang.readLine()) != null) {
-
-                inputArrayLang = inputLineUser.split("\t");
-
-                row.put(LanguageSQLiteOpenHelper.COLUMN_ID, id_lang);
-                row.put(LanguageSQLiteOpenHelper.COLUMN_FREQ, freq);
-                row.put(LanguageSQLiteOpenHelper.COLUMN_WORD, word);
-                row.put(LanguageSQLiteOpenHelper.COLUMN_FULL, full);
-                row.put(LanguageSQLiteOpenHelper.COLUMN_TRANS, trans);
-                row.put(LanguageSQLiteOpenHelper.COLUMN_FLEVEL, 0);
-                row.put(LanguageSQLiteOpenHelper.COLUMN_FLAPSE, 0);
-                row.put(LanguageSQLiteOpenHelper.COLUMN_BLEVEL, 0);
-                row.put(LanguageSQLiteOpenHelper.COLUMN_BLAPSE, 0);
-
-                rowID = writableDatabase.insert(table_name, null, row);
+            } catch (IOException e) {
 
             }
 
-        } catch (IOException e) {
+            try {
+                brLang.close();
+                brUser.close();
+            } catch (IOException e) {
 
-        }
-
-        try {
-            brLang.close();
-            brUser.close();
-        } catch (IOException e) {
+            }
+        } catch (FileNotFoundException e) {
 
         }
 
@@ -544,7 +561,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public static void askWord () {
+    public void askWord () {
 
         check_view.setVisibility(View.VISIBLE);
         respond_view.setVisibility(View.GONE);
@@ -564,7 +581,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public static void checkWord () {
+    public void checkWord () {
 
         check_view.setVisibility(View.GONE);
         respond_view.setVisibility(View.VISIBLE);
@@ -573,7 +590,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public static void onUserRespond (boolean known) {
+    public void onUserRespond (boolean known) {
 
         int new_flevel, new_flapse, new_blevel, new_blapse;
         String updateQuery = null;
@@ -618,13 +635,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public static void endRound() {
+    public void endRound() {
 
         main_message.setText(R.string.round_complete);
         main_passed.setText(R.string.words_passed + yes_count);
         main_failed.setText(R.string.words_failed + no_count);
-
-
 
         writableDatabase.close();
 
@@ -634,7 +649,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public static int getLapse (int level) {
+    public int getLapse (int level) {
 
         switch (lapse_mode) {
             case PRIME_MODE: return prime[level-1];
@@ -644,11 +659,68 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public static boolean languageBackupText () {
+    public boolean languageBackupText (String language) {
 
-        readableDatabase = langHelper.getReadableDatabase();
-        String createViewQuery = "CREATE VIEW ordered_table AS SELECT * FROM " +
-                LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN + " ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_ID;
+        String table_name = null;
+        String file_name = null;
+
+        switch (language) {
+            case GERMAN_LANGUAGE:
+                table_name = LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN;
+                file_name = "german_user.txt";
+            case LATIN_LANGUAGE:
+                table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
+                file_name = "latin_user.txt";
+        }
+
+        writableDatabase = langHelper.getWritableDatabase();
+        String createViewQuery = "CREATE VIEW ordered_table AS SELECT " +
+                LanguageSQLiteOpenHelper.COLUMN_ID + ", " +
+                LanguageSQLiteOpenHelper.COLUMN_FLEVEL + ", " +
+                LanguageSQLiteOpenHelper.COLUMN_FLAPSE + ", " +
+                LanguageSQLiteOpenHelper.COLUMN_BLEVEL + ", " +
+                LanguageSQLiteOpenHelper.COLUMN_BLAPSE + ", " +
+                " FROM " + table_name + " ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_ID;
+        writableDatabase.execSQL(createViewQuery);
+
+        String viewRowsQuery = "SELECT * FROM ordered_table";
+        Cursor viewCursor = writableDatabase.rawQuery(viewRowsQuery, null);
+
+        try {
+
+            FileOutputStream fos = openFileOutput(file_name, Context.MODE_PRIVATE);
+
+            ArrayList<Integer> row = new ArrayList<Integer>();
+
+            while (viewCursor.moveToNext()) {
+
+                row.add(viewCursor.getInt(0));
+                row.add(viewCursor.getInt(1));
+                row.add(viewCursor.getInt(2));
+                row.add(viewCursor.getInt(3));
+                row.add(viewCursor.getInt(4));
+
+                CharSequence delimiter = "\t";
+
+                String joined = TextUtils.join(delimiter, row);
+
+                fos.write(joined.getBytes());
+
+                row.clear();
+
+            }
+
+            fos.close();
+
+        } catch (FileNotFoundException e) {
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
+
+        String dropViewQuery = "DROP VIEW ordered_table";
+        writableDatabase.execSQL(dropViewQuery);
+        writableDatabase.close();
 
         return true;
     }

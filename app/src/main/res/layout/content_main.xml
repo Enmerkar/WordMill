@@ -25,7 +25,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <Button android:id="@+id/begin_round"
+    <ImageButton android:id="@+id/begin_round"
+        android:contentDescription="@string/begin_round_button"
+        android:src="@drawable/status_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

@@ -9,8 +9,9 @@
     <dimen name="button_width_long">96dp</dimen>
     <dimen name="button_height">48dp</dimen>
     <dimen name="button_gap">32dp</dimen>
-    <dimen name="status_button_ratio">5</dimen>
+    <dimen name="status_button_ratio">5dp</dimen>
     <dimen name="status_button_thickness">50dp</dimen>
     <dimen name="status_button_diameter">200dp</dimen>
+
 
 </resources>

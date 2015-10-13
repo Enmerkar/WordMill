@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="ring"
-    android:innerRadiusRatio="@dimen/status_button_ratio"
-    android:thickness="@dimen/status_button_thickness" >
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <size
-        android:height="@dimen/status_button_diameter"
-        android:width="@dimen/status_button_diameter" />
+    <item>
+        <shape android:id="@+id/base_ring"
+            android:shape="ring"
+            android:innerRadiusRatio="5"
+            android:thickness="@dimen/status_button_thickness" >
 
-    <solid
-        android:color="@color/status_button_lapsed" />
+            <size
+                android:height="@dimen/status_button_diameter"
+                android:width="@dimen/status_button_diameter" />
 
-</shape>
+            <solid
+                android:color="@color/status_button_lapsed" />
+
+        </shape>
+    </item>
+
+    <item>
+        <shape android:id="@+id/progress_arc" />
+    </item>
+
+</layer-list>

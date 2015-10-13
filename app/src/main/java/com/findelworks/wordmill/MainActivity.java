@@ -2,12 +2,20 @@ package com.findelworks.wordmill;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.ArcShape;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -172,7 +180,7 @@ public class MainActivity extends AppCompatActivity
         changeLanguage(active_language);
 
         // Click listener for begin new round button
-        Button begin_round = (Button) findViewById(R.id.begin_round);
+        ImageButton begin_round = (ImageButton) findViewById(R.id.begin_round);
         begin_round.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 beginRound();
@@ -314,6 +322,22 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void reverseDirection() {
+
+
+
+    }
+
+    public void drawButton() {
+
+        Bitmap b = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        Paint p = new Paint();
+
+        RectF rectF = new RectF(50, 20, 100, 80);
+        c.drawArc(rectF,0,180,true,p);
+
+        View v = (View) findViewById(R.id.button_view);
+        v.draw(c);
 
     }
 

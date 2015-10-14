@@ -63,12 +63,14 @@ public class MainActivity extends AppCompatActivity
     private static final String GERMAN_DIRECTION = "GERMAN_DIRECTION";
     private static final String GERMAN_BUCKET_SIZE = "GERMAN_BUCKET_SIZE";
     private static final String GERMAN_LAPSE_MODE = "GERMAN_LAPSE_MODE";
+    private static final String GERMAN_FULL_MODE = "GERMAN_FULL_MODE";
 
     private static final String LATIN_LANGUAGE = "LATIN";
     private static final String LATIN_PREFERENCES = "LATIN_PREFERENCES";
     private static final String LATIN_DIRECTION = "LATIN_DIRECTION";
     private static final String LATIN_BUCKET_SIZE = "LATIN_BUCKET_SIZE";
     private static final String LATIN_LAPSE_MODE = "LATIN_LAPSE_MODE";
+    private static final String LATIN_FULL_MODE = "LATIN_FULL_MODE";
 
     private static SharedPreferences global_preferences;
     private static SharedPreferences german_preferences;
@@ -77,9 +79,10 @@ public class MainActivity extends AppCompatActivity
     private static String active_language;
     private static String table_name;
 
-    private static int language_mode;
+    private static boolean forward_mode;
     private static int bucket_size;
     private static String lapse_mode;
+    private static boolean full_mode;
 
     private static LanguageSQLiteOpenHelper langHelper;
     private static SQLiteDatabase writableDatabase;
@@ -177,7 +180,7 @@ public class MainActivity extends AppCompatActivity
 
         // Restore previously active language
         active_language = global_preferences.getString(ACTIVE_LANGUAGE, null);
-        changeLanguage(active_language);
+        setLanguage(active_language);
 
         // Click listener for begin new round button
         ImageButton begin_round = (ImageButton) findViewById(R.id.begin_round);
@@ -277,8 +280,9 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.nav_german: changeLanguage(GERMAN_LANGUAGE); break;
-            case R.id.nav_latin: changeLanguage(LATIN_LANGUAGE); break;
+            case R.id.nav_german: setLanguage(GERMAN_LANGUAGE); break;
+            case R.id.nav_latin: setLanguage(LATIN_LANGUAGE);
+                break;
             case R.id.nav_add: break;
             case R.id.nav_profile: break;
             case R.id.nav_share: break;
@@ -291,22 +295,24 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public void changeLanguage(String language) {
+    public void setLanguage(String language) {
 
         switch (active_language) {
             case GERMAN_LANGUAGE:
                 active_language = GERMAN_LANGUAGE;
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN;
-                language_mode = german_preferences.getInt(GERMAN_DIRECTION, 0);
+                forward_mode = german_preferences.getBoolean(GERMAN_DIRECTION, true);
                 bucket_size = german_preferences.getInt(GERMAN_BUCKET_SIZE, 12);
                 lapse_mode = german_preferences.getString(GERMAN_LAPSE_MODE, FIBONACCI_MODE);
+                full_mode = german_preferences.getBoolean(GERMAN_FULL_MODE, true);
                 break;
             case LATIN_LANGUAGE:
                 active_language = LATIN_LANGUAGE;
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
-                language_mode = latin_preferences.getInt(LATIN_DIRECTION, 0);
+                forward_mode = latin_preferences.getBoolean(LATIN_DIRECTION, true);
                 bucket_size = latin_preferences.getInt(LATIN_BUCKET_SIZE, 12);
                 lapse_mode = latin_preferences.getString(LATIN_LAPSE_MODE, FIBONACCI_MODE);
+                full_mode = latin_preferences.getBoolean(LATIN_FULL_MODE, true);
                 break;
             default: break;
         }
@@ -363,12 +369,12 @@ public class MainActivity extends AppCompatActivity
         String table_name = null;
 
         switch (language) {
-            case "GERMAN":
+            case GERMAN_LANGUAGE:
                 res_id_data = R.raw.german_data;
                 file_user = "german_user.txt";
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN;
                 break;
-            case "LATIN":
+            case LATIN_LANGUAGE:
                 res_id_data = R.raw.latin_data;
                 file_user = "latin_user.txt";
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
@@ -500,10 +506,12 @@ public class MainActivity extends AppCompatActivity
         writableDatabase = langHelper.getWritableDatabase();
         String lapseWordQuery = null;
 
-        if (language_mode == 0) {
-            lapseWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " ASC LIMIT " + bucket_size;
+        if (forward_mode) {
+            lapseWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL +
+                    " > 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " ASC LIMIT " + bucket_size;
         } else {
-            lapseWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " ASC LIMIT " + bucket_size;
+            lapseWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL +
+                    " > 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " ASC LIMIT " + bucket_size;
         }
 
         Cursor lapseCursor = writableDatabase.rawQuery(lapseWordQuery, null);
@@ -539,7 +547,7 @@ public class MainActivity extends AppCompatActivity
 
             String newWordQuery = null;
 
-            if (language_mode == 0) {
+            if (forward_mode) {
                 newWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL +
                         " = 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_FREQ + " ASC LIMIT " + additional;
             } else {
@@ -619,7 +627,7 @@ public class MainActivity extends AppCompatActivity
         int new_flevel, new_flapse, new_blevel, new_blapse;
         String updateQuery = null;
 
-        if (language_mode == 0) {
+        if (forward_mode) {
             if (known) {
                 yes_count++;
                 new_flevel = current_flevel - 1;

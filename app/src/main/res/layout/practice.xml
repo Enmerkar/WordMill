@@ -36,7 +36,8 @@
 
         <Button android:id="@+id/button_check"
             android:layout_width="@dimen/button_width_long"
-            android:layout_height="@dimen/button_height" />
+            android:layout_height="@dimen/button_height"
+            android:text="@string/check_button"/>
 
     </LinearLayout>
 
@@ -49,7 +50,8 @@
 
         <Button android:id="@+id/button_no"
             android:layout_width="@dimen/button_width_long"
-            android:layout_height="@dimen/button_height" />
+            android:layout_height="@dimen/button_height"
+            android:text="@string/no_button"/>
 
         <TextView
             android:layout_width="@dimen/button_gap"
@@ -57,7 +59,8 @@
 
         <Button android:id="@+id/button_yes"
             android:layout_width="@dimen/button_width_long"
-            android:layout_height="@dimen/button_height" />
+            android:layout_height="@dimen/button_height"
+            android:text="@string/yes_button" />
 
     </LinearLayout>
 

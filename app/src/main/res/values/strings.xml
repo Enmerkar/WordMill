@@ -10,7 +10,15 @@
     <string name="language_latin">Latin</string>
     <string name="language_add">Add New Language</string>
 
+    <string name="main_message">Welcome!</string>
+    <string name="main_revised">Revised:</string>
+    <string name="main_affirmed">Affirmed:</string>
+
     <string name="begin_round_button">Begin Round</string>
+
+    <string name="check_button">Check</string>
+    <string name="yes_button">Yes</string>
+    <string name="no_button">No</string>
 
     <string name="round_complete">Round Complete</string>
     <string name="words_passed">Reinforced: </string>

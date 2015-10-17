@@ -14,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewStub;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.support.design.widget.NavigationView;
@@ -27,7 +26,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import java.io.BufferedWriter;
 import java.io.File;
-import android.database.sqlite.SQLiteOpenHelper;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -52,25 +50,30 @@ import android.database.sqlite.SQLiteQueryBuilder;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String DEFAULT_LANGUAGE = "GERMAN";
+    private static final String GERMAN_LANGUAGE = "GERMAN";
+    private static final String LATIN_LANGUAGE = "LATIN";
+
     private static final String GLOBAL_PREFERENCES = "GLOBAL_PREFERENCES";
+    private static final String GERMAN_PREFERENCES = "GERMAN_PREFERENCES";
+    private static final String LATIN_PREFERENCES = "LATIN_PREFERENCES";
+
+    private static final String DIRECTION_PREFERENCE = "DIRECTION_PREFERENCE";
+    private static final String BUCKET_SIZE_PREFERENCE = "BUCKET_SIZE_PREFERENCE";
+    private static final String LAPSE_MODE_PREFERENCE = "LAPSE_MODE_PREFERENCE";
+    private static final String FULL_MODE_PREFERENCE = "FULL_MODE_PREFERENCE";
+
     private static final String ACTIVE_LANGUAGE = "ACTIVE_LANGUAGE";
     private static final String FIBONACCI_MODE = "FIBONACCI_MODE";
     private static final String PRIME_MODE = "PRIME_MODE";
     private static final String ODD_MODE = "ODD_MODE";
-
-    private static final String GERMAN_LANGUAGE = "GERMAN";
-    private static final String GERMAN_PREFERENCES = "GERMAN_PREFERENCES";
-    private static final String GERMAN_DIRECTION = "GERMAN_DIRECTION";
-    private static final String GERMAN_BUCKET_SIZE = "GERMAN_BUCKET_SIZE";
-    private static final String GERMAN_LAPSE_MODE = "GERMAN_LAPSE_MODE";
-    private static final String GERMAN_FULL_MODE = "GERMAN_FULL_MODE";
-
-    private static final String LATIN_LANGUAGE = "LATIN";
-    private static final String LATIN_PREFERENCES = "LATIN_PREFERENCES";
-    private static final String LATIN_DIRECTION = "LATIN_DIRECTION";
-    private static final String LATIN_BUCKET_SIZE = "LATIN_BUCKET_SIZE";
-    private static final String LATIN_LAPSE_MODE = "LATIN_LAPSE_MODE";
-    private static final String LATIN_FULL_MODE = "LATIN_FULL_MODE";
+    private static final String WORDS_ENCOUNTERED = "WORDS_ENCOUNTERED";
+    private static final String WORDS_LAPSED = "WORDS_LAPSED";
+    private static final int DEFAULT_BUCKET_SIZE = 12;
+    private static final boolean DEFAULT_DIRECTION = true;
+    private static final boolean DEFAULT_FULL_MODE = true;
+    private static final int DEFAULT_WORDS_ENCOUNTERED = 0;
+    private static final int DEFAULT_WORDS_LAPSED = 0;
 
     private static SharedPreferences global_preferences;
     private static SharedPreferences german_preferences;
@@ -83,13 +86,12 @@ public class MainActivity extends AppCompatActivity
     private static int bucket_size;
     private static String lapse_mode;
     private static boolean full_mode;
+    private static int words_encountered;
+    private static int words_lapsed;
+
 
     private static LanguageSQLiteOpenHelper langHelper;
     private static SQLiteDatabase writableDatabase;
-    private static SQLiteDatabase readableDatabase;
-
-    private static ViewStub language_stub;
-    private static ViewStub practice_stub;
 
     private static boolean newGermanFile;
     private static boolean newLatinFile;
@@ -130,10 +132,6 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        language_stub = (ViewStub) findViewById(R.id.language_page);
-        practice_stub = (ViewStub) findViewById(R.id.practice_page);
-        practice_stub.setVisibility(View.INVISIBLE);
-        View inflated = language_stub.inflate();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -179,11 +177,18 @@ public class MainActivity extends AppCompatActivity
         }
 
         // Restore previously active language
-        active_language = global_preferences.getString(ACTIVE_LANGUAGE, null);
+        try {
+            active_language = global_preferences.getString(ACTIVE_LANGUAGE, GERMAN_LANGUAGE);
+        } catch (ClassCastException e) {
+            SharedPreferences.Editor editor = global_preferences.edit();
+            editor.putString(ACTIVE_LANGUAGE, DEFAULT_LANGUAGE);
+            editor.apply();
+            active_language = DEFAULT_LANGUAGE;
+        }
         setLanguage(active_language);
 
         // Click listener for begin new round button
-        ImageButton begin_round = (ImageButton) findViewById(R.id.begin_round);
+        View begin_round = findViewById(R.id.begin_round_view);
         begin_round.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 beginRound();
@@ -191,7 +196,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         // Click listener for reverse direction button
-        Button reverse_button = (Button) findViewById(R.id.reverse_button);
+        View reverse_button = findViewById(R.id.reverse_button_view);
         reverse_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 reverseDirection();
@@ -281,8 +286,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_german: setLanguage(GERMAN_LANGUAGE); break;
-            case R.id.nav_latin: setLanguage(LATIN_LANGUAGE);
-                break;
+            case R.id.nav_latin: setLanguage(LATIN_LANGUAGE); break;
             case R.id.nav_add: break;
             case R.id.nav_profile: break;
             case R.id.nav_share: break;
@@ -301,18 +305,40 @@ public class MainActivity extends AppCompatActivity
             case GERMAN_LANGUAGE:
                 active_language = GERMAN_LANGUAGE;
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN;
-                forward_mode = german_preferences.getBoolean(GERMAN_DIRECTION, true);
-                bucket_size = german_preferences.getInt(GERMAN_BUCKET_SIZE, 12);
-                lapse_mode = german_preferences.getString(GERMAN_LAPSE_MODE, FIBONACCI_MODE);
-                full_mode = german_preferences.getBoolean(GERMAN_FULL_MODE, true);
+                try {
+                    forward_mode = german_preferences.getBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
+                    bucket_size = german_preferences.getInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
+                    lapse_mode = german_preferences.getString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
+                    full_mode = german_preferences.getBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
+                } catch (ClassCastException e) {
+                    SharedPreferences.Editor german_editor = german_preferences.edit();
+                    german_editor.putBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
+                    german_editor.putInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
+                    german_editor.putString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
+                    german_editor.putBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
+                    german_editor.putInt(WORDS_ENCOUNTERED, DEFAULT_WORDS_ENCOUNTERED);
+                    german_editor.putInt(WORDS_LAPSED, DEFAULT_WORDS_LAPSED);
+                    german_editor.apply();
+                }
                 break;
             case LATIN_LANGUAGE:
-                active_language = LATIN_LANGUAGE;
-                table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
-                forward_mode = latin_preferences.getBoolean(LATIN_DIRECTION, true);
-                bucket_size = latin_preferences.getInt(LATIN_BUCKET_SIZE, 12);
-                lapse_mode = latin_preferences.getString(LATIN_LAPSE_MODE, FIBONACCI_MODE);
-                full_mode = latin_preferences.getBoolean(LATIN_FULL_MODE, true);
+                try {
+                    active_language = LATIN_LANGUAGE;
+                    table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
+                    forward_mode = latin_preferences.getBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
+                    bucket_size = latin_preferences.getInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
+                    lapse_mode = latin_preferences.getString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
+                    full_mode = latin_preferences.getBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
+                } catch (ClassCastException e) {
+                    SharedPreferences.Editor latin_editor = latin_preferences.edit();
+                    latin_editor.putBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
+                    latin_editor.putInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
+                    latin_editor.putString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
+                    latin_editor.putBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
+                    latin_editor.putInt(WORDS_ENCOUNTERED, DEFAULT_WORDS_ENCOUNTERED);
+                    latin_editor.putInt(WORDS_LAPSED, DEFAULT_WORDS_LAPSED);
+                    latin_editor.apply();
+                }
                 break;
             default: break;
         }
@@ -335,15 +361,15 @@ public class MainActivity extends AppCompatActivity
 
     public void drawButton() {
 
-        Bitmap b = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        Paint p = new Paint();
-
-        RectF rectF = new RectF(50, 20, 100, 80);
-        c.drawArc(rectF,0,180,true,p);
-
-        View v = (View) findViewById(R.id.button_view);
-        v.draw(c);
+//        Bitmap b = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+//        Canvas c = new Canvas(b);
+//        Paint p = new Paint();
+//
+//        RectF rectF = new RectF(50, 20, 100, 80);
+//        c.drawArc(rectF,0,180,true,p);
+//
+//        View v = (View) findViewById(R.id.begin_round);
+//        v.draw(c);
 
     }
 
@@ -386,7 +412,7 @@ public class MainActivity extends AppCompatActivity
         writableDatabase = langHelper.getWritableDatabase();
 
         // Clear table of old data
-        writableDatabase.execSQL("DELETE * FROM " + table_name);
+        writableDatabase.execSQL("DELETE FROM " + table_name);
 
         boolean match;
         String inputLineLang, inputLineUser;
@@ -397,9 +423,11 @@ public class MainActivity extends AppCompatActivity
         long rowID;
 
         try {
+
             InputStream is = res.openRawResource(res_id_data);
-            FileInputStream fis = openFileInput(file_user);
             BufferedReader brLang = new BufferedReader(new InputStreamReader(is));
+
+            FileInputStream fis = openFileInput(file_user);
             BufferedReader brUser = new BufferedReader(new InputStreamReader(fis));
 
             ContentValues row = new ContentValues();
@@ -425,7 +453,7 @@ public class MainActivity extends AppCompatActivity
                         while (!match) {
 
                             inputLineLang = brLang.readLine();
-                            inputArrayLang = inputLineUser.split("\t");
+                            inputArrayLang = inputLineLang.split("\t");
 
                             id_lang = Integer.parseInt(inputArrayLang[0]);
                             freq = Integer.parseInt(inputArrayLang[1]);
@@ -464,7 +492,13 @@ public class MainActivity extends AppCompatActivity
                 // Copy in any trailing unattempted words into the database
                 while ((inputLineLang = brLang.readLine()) != null) {
 
-                    inputArrayLang = inputLineUser.split("\t");
+                    inputArrayLang = inputLineLang.split("\t");
+
+                    id_lang = Integer.parseInt(inputArrayLang[0]);
+                    freq = Integer.parseInt(inputArrayLang[1]);
+                    word = inputArrayLang[2];
+                    full = inputArrayLang[3];
+                    trans = inputArrayLang[4];
 
                     row.put(LanguageSQLiteOpenHelper.COLUMN_ID, id_lang);
                     row.put(LanguageSQLiteOpenHelper.COLUMN_FREQ, freq);
@@ -542,10 +576,11 @@ public class MainActivity extends AppCompatActivity
 
         lapseCursor.close();
 
+        String newWordQuery = "";
+
         int additional = bucket_size - round_id.size();
         if (additional > 0) {
 
-            String newWordQuery = null;
 
             if (forward_mode) {
                 newWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL +
@@ -581,19 +616,19 @@ public class MainActivity extends AppCompatActivity
         }
         Collections.shuffle(round_shuffled);
 
-        // Inflate practice view
-        language_stub.setVisibility(View.GONE);
-        View inflated = practice_stub.inflate();
-
         if (round_shuffled.size() > 0) {
             askWord();
         } else {
             writableDatabase.close();
         }
 
+
     }
 
     public void askWord () {
+
+        findViewById(R.id.language_page).setVisibility(View.GONE);
+        findViewById(R.id.practice_page).setVisibility(View.VISIBLE);
 
         check_view.setVisibility(View.VISIBLE);
         respond_view.setVisibility(View.GONE);
@@ -610,6 +645,8 @@ public class MainActivity extends AppCompatActivity
         current_id = round_id.get(i);
         current_flevel = round_flevel.get(i);
         current_blevel = round_blevel.get(i);
+
+        word_view.setText(active_language);
 
     }
 
@@ -675,9 +712,13 @@ public class MainActivity extends AppCompatActivity
 
         writableDatabase.close();
 
-        // Inflate language view
-        practice_stub.setVisibility(View.GONE);
-        View inflated = language_stub.inflate();
+        // Redraw button
+
+        // Set status details
+
+        // Show practice.xml layout
+        findViewById(R.id.practice_page).setVisibility(View.GONE);
+        findViewById(R.id.language_page).setVisibility(View.VISIBLE);
 
     }
 
@@ -742,6 +783,7 @@ public class MainActivity extends AppCompatActivity
 
             }
 
+            viewCursor.close();
             fos.close();
 
         } catch (FileNotFoundException e) {

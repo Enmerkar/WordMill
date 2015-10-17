@@ -21,16 +21,11 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ViewStub android:id="@+id/language_page"
-        android:inflatedId="@+id/activity1"
-        android:layout="@layout/content_main"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+    <include android:id="@+id/language_page"
+        layout="@layout/content_main"/>
 
-    <ViewStub android:id="@+id/practice_page"
-        android:inflatedId="@+id/activity2"
-        android:layout="@layout/practice"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+    <include android:id="@+id/practice_page"
+        android:visibility="gone"
+        layout="@layout/practice"/>
 
 </android.support.design.widget.CoordinatorLayout>

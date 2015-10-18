@@ -21,8 +21,8 @@
     <string name="no_button">No</string>
 
     <string name="round_complete">Round Complete</string>
-    <string name="words_passed">Reinforced: </string>
-    <string name="words_failed">Revised: </string>
+    <string name="words_passed">Reinforced:</string>
+    <string name="words_failed">Revised:</string>
 
     <string name="umlaut">&#x2E1A;</string>
 

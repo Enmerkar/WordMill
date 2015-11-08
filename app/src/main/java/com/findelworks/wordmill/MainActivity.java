@@ -24,6 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import java.lang.Long;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,7 +59,7 @@ public class MainActivity extends AppCompatActivity
     private static final String LATIN_USER_FILE = "latin_user.txt";
 
     private static final String GLOBAL_PREFERENCES = "GLOBAL_PREFERENCES";
-    private static final String LAST_UPDATE_TIME = "LAST_UPDATE_TIME";
+    private static final String LAST_DECREMENT_TIME = "LAST_DECREMENT_TIME";
     private static final String LAPSE_DECREMENT_HOUR_PREFERENCE = "LAPSE_DECREMENT_HOUR_PREFERENCE";
 
     private static final String GERMAN_PREFERENCES = "GERMAN_PREFERENCES";
@@ -90,9 +91,9 @@ public class MainActivity extends AppCompatActivity
 
     private static String active_language;
     private static String table_name;
-
-    private static long last_update_time;
     private static int lapse_decrement_hour;
+
+    private static long last_decrement_time;
     private static boolean forward_mode;
     private static int bucket_size;
     private static String lapse_mode;
@@ -203,6 +204,8 @@ public class MainActivity extends AppCompatActivity
         // Set/get the language specific preferences
         setLanguage(active_language);
 
+        drawButton();
+
         // Click listener for begin new round button
         View begin_round = findViewById(R.id.begin_round_view);
         begin_round.setOnClickListener(new View.OnClickListener() {
@@ -248,9 +251,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
-
-        Date now = new Date();
-        Long now_time = now.getTime();
 
         languageBackupText(active_language);
 
@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity
                 active_language = GERMAN_LANGUAGE;
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN;
                 try {
-                    last_update_time = german_preferences.getLong(LAST_UPDATE_TIME, now_time);
+                    last_decrement_time = german_preferences.getLong(LAST_DECREMENT_TIME, now_time);
                     forward_mode = german_preferences.getBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
                     bucket_size = german_preferences.getInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
                     lapse_mode = german_preferences.getString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity
                     decrementLapseDays(now_time);
                 } catch (ClassCastException e) {
                     SharedPreferences.Editor german_editor = german_preferences.edit();
-                    german_editor.putLong(LAST_UPDATE_TIME, now_time);
+                    german_editor.putLong(LAST_DECREMENT_TIME, now_time);
                     german_editor.putBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
                     german_editor.putInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
                     german_editor.putString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
@@ -350,7 +350,7 @@ public class MainActivity extends AppCompatActivity
                 active_language = LATIN_LANGUAGE;
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
                 try {
-                    last_update_time = latin_preferences.getLong(LAST_UPDATE_TIME, now_time);
+                    last_decrement_time = latin_preferences.getLong(LAST_DECREMENT_TIME, now_time);
                     forward_mode = latin_preferences.getBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
                     bucket_size = latin_preferences.getInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
                     lapse_mode = latin_preferences.getString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity
                     decrementLapseDays(now_time);
                 } catch (ClassCastException e) {
                     SharedPreferences.Editor latin_editor = latin_preferences.edit();
-                    latin_editor.putLong(LAST_UPDATE_TIME, now_time);
+                    latin_editor.putLong(LAST_DECREMENT_TIME, now_time);
                     latin_editor.putBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
                     latin_editor.putInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
                     latin_editor.putString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
@@ -368,7 +368,6 @@ public class MainActivity extends AppCompatActivity
                     latin_editor.apply();
                 }
                 break;
-            default: break;
         }
 
         SharedPreferences.Editor editor = global_preferences.edit();
@@ -382,22 +381,38 @@ public class MainActivity extends AppCompatActivity
     public static void decrementLapseDays(long now) {
 
         // This needs to be updated to account for lapse_time_preference
-        long difference = now - last_update_time;
+        long difference = now - last_decrement_time;
+        long days_long = difference / 86400000;
+        int days = (int) days_long;
 
-        if (difference > 86400000) {
+        if (days > 1) {
 
             String decrementFlapseQuery = "UDPATE " + table_name +
-                    " SET " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " = " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " - 1" +
+                    " SET " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " = " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " - " + days +
                     " WHERE" + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 1";
 
             String decrementBlapseQuery = "UDPATE " + table_name +
-                    " SET " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " = " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " - 1" +
+                    " SET " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " = " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " - " + days +
                     " WHERE" + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 1";
 
             writableDatabase.execSQL(decrementFlapseQuery);
             writableDatabase.execSQL(decrementBlapseQuery);
 
+            switch (active_language) {
+                case GERMAN_LANGUAGE:
+                    SharedPreferences.Editor german_editor = german_preferences.edit();
+                    german_editor.putLong(LAST_DECREMENT_TIME, now);
+                    german_editor.apply();
+                    break;
+                case LATIN_LANGUAGE:
+                    SharedPreferences.Editor latin_editor = latin_preferences.edit();
+                    latin_editor.putLong(LAST_DECREMENT_TIME, now);
+                    latin_editor.apply();
+                    break;
+            }
+
         }
+
     }
 
     public void reverseDirection() {
@@ -422,15 +437,16 @@ public class MainActivity extends AppCompatActivity
 
     public void drawButton() {
 
-//        Bitmap b = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-//        Canvas c = new Canvas(b);
-//        Paint p = new Paint();
-//
-//        RectF rectF = new RectF(50, 20, 100, 80);
-//        c.drawArc(rectF,0,180,true,p);
-//
-//        View v = (View) findViewById(R.id.begin_round);
-//        v.draw(c);
+        Bitmap b = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        Paint p = new Paint();
+        p.setColor(Color.BLUE);
+
+        RectF rectF = new RectF(50, 20, 100, 80);
+        c.drawArc(rectF,0,180,true,p);
+
+        View v = (View) findViewById(R.id.begin_round_view);
+        v.draw(c);
 
     }
 
@@ -731,13 +747,15 @@ public class MainActivity extends AppCompatActivity
                 yes_count++;
                 new_flevel = (current_flevel < 2) ? 2 : current_flevel++;
                 new_flapse = getLapse(new_flevel);
-                updateQuery = "UPDATE " + table_name + " SET " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " = " + new_flevel + ", " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " = " + new_flapse +
+                updateQuery = "UPDATE " + table_name + " SET " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " = " + new_flevel +
+                        ", " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " = " + new_flapse +
                         " WHERE " + LanguageSQLiteOpenHelper.COLUMN_ID + " = " + current_id;
             } else {
                 no_count++;
                 new_flevel = (current_flevel < 2) ? 1 : current_flevel--;
                 new_flapse = getLapse(new_flevel);
-                updateQuery = "UPDATE " + table_name + " SET " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " = " + new_flevel + ", " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " = " + new_flapse +
+                updateQuery = "UPDATE " + table_name + " SET " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " = " + new_flevel +
+                        ", " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " = " + new_flapse +
                         " WHERE " + LanguageSQLiteOpenHelper.COLUMN_ID + " = " + current_id;
             }
         } else {
@@ -745,13 +763,15 @@ public class MainActivity extends AppCompatActivity
                 yes_count++;
                 new_blevel = (current_blevel < 2) ? 2 : current_blevel++;
                 new_blapse = getLapse(new_blevel);
-                updateQuery = "UPDATE " + table_name + " SET " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " = " + new_blevel + ", " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " = " + new_blapse +
+                updateQuery = "UPDATE " + table_name + " SET " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " = " + new_blevel +
+                        ", " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " = " + new_blapse +
                         " WHERE " + LanguageSQLiteOpenHelper.COLUMN_ID + " = " + current_id;
             } else {
                 no_count++;
                 new_blevel = (current_blevel < 2) ? 1 : current_blevel--;
                 new_blapse = getLapse(new_blevel);
-                updateQuery = "UPDATE " + table_name + " SET " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " = " + new_blevel + ", " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " = " + new_blapse +
+                updateQuery = "UPDATE " + table_name + " SET " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " = " + new_blevel +
+                        ", " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " = " + new_blapse +
                         " WHERE " + LanguageSQLiteOpenHelper.COLUMN_ID + " = " + current_id;
             }
         }
@@ -781,18 +801,6 @@ public class MainActivity extends AppCompatActivity
         findViewById(R.id.practice_page).setVisibility(View.GONE);
         findViewById(R.id.language_page).setVisibility(View.VISIBLE);
 
-
-        // TEST CODE ONLY
-        try {
-            languageBackupText(GERMAN_LANGUAGE);
-            FileInputStream fi = openFileInput(GERMAN_USER_FILE);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fi));
-            String in = br.readLine();
-            main_message.setText(in);
-        } catch (IOException e) {
-
-        }
-
     }
 
     public int getLapse (int level) {
@@ -810,13 +818,11 @@ public class MainActivity extends AppCompatActivity
         String file = null;
 
         switch (language) {
-            case GERMAN_LANGUAGE:
-                file = GERMAN_USER_FILE;
-            case LATIN_LANGUAGE:
-                file = LATIN_USER_FILE;
+            case GERMAN_LANGUAGE: file = GERMAN_USER_FILE; break;
+            case LATIN_LANGUAGE: file = LATIN_USER_FILE; break;
         }
 
-        String createViewQuery = "CREATE VIEW ordered_table AS SELECT " +
+        String createViewQuery = "CREATE VIEW ordered AS SELECT " +
                 LanguageSQLiteOpenHelper.COLUMN_ID + ", " +
                 LanguageSQLiteOpenHelper.COLUMN_FLEVEL + ", " +
                 LanguageSQLiteOpenHelper.COLUMN_FLAPSE + ", " +
@@ -825,7 +831,7 @@ public class MainActivity extends AppCompatActivity
                 " FROM " + table_name + " ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_ID;
         writableDatabase.execSQL(createViewQuery);
 
-        String viewRowsQuery = "SELECT * FROM ordered_table";
+        String viewRowsQuery = "SELECT * FROM ordered";
         Cursor viewCursor = writableDatabase.rawQuery(viewRowsQuery, null);
 
         try {
@@ -843,7 +849,7 @@ public class MainActivity extends AppCompatActivity
                 row.add(viewCursor.getInt(4));
 
                 CharSequence delimiter = ";";
-                String joined = TextUtils.join(delimiter, row);
+                String joined = TextUtils.join(delimiter, row) + "\n";
                 fos.write(joined.getBytes());
                 row.clear();
 
@@ -858,7 +864,7 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        String dropViewQuery = "DROP VIEW ordered_table";
+        String dropViewQuery = "DROP VIEW ordered";
         writableDatabase.execSQL(dropViewQuery);
 
     }

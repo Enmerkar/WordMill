@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.support.design.widget.NavigationView;
@@ -117,6 +118,10 @@ public class MainActivity extends AppCompatActivity
     private static LinearLayout check_view;
     private static LinearLayout respond_view;
 
+    private static ImageView mButtonView;
+    private static float arcStart;
+    private static float arcSweep;
+
     private static ArrayList<Integer> round_id;
     private static ArrayList<Integer> round_freq;
     private static ArrayList<String> round_word;
@@ -136,7 +141,8 @@ public class MainActivity extends AppCompatActivity
     private static int current_blevel;
 
     private static int[] fibonacci = {0,0,1,2,3,5,8,13,21,34,55,89,144,233};
-    private static int[] prime = {0,0,1,2,3,5,7,11,13,17,19,29,23,31};
+    private static int[] middle = {};
+    private static int[] prime = {0,0,1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97,101};
     private static int[] odd = {0,0,1,3,5,7,9,11,13,15,17,19,21,23};
 
     @Override
@@ -437,16 +443,9 @@ public class MainActivity extends AppCompatActivity
 
     public void drawButton() {
 
-        Bitmap b = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
-        Canvas c = new Canvas(b);
-        Paint p = new Paint();
-        p.setColor(Color.BLUE);
-
-        RectF rectF = new RectF(50, 20, 100, 80);
-        c.drawArc(rectF,0,180,true,p);
-
-        View v = (View) findViewById(R.id.begin_round_view);
-        v.draw(c);
+        mButtonView = new ProgressButton(this, arcStart, arcSweep);
+        ImageView begin_round = (ImageView) findViewById(R.id.begin_round_view);
+        begin_round.setImageDrawable(mButtonView);
 
     }
 

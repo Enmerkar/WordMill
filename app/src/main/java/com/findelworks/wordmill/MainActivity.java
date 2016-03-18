@@ -4,18 +4,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.ArcShape;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -48,16 +46,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.ArrayList;
-import android.database.sqlite.SQLiteQueryBuilder;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String GERMAN_LANGUAGE = "GERMAN";
     private static final String LATIN_LANGUAGE = "LATIN";
+    private static final String ATTIC_LANGUAGE = "ATTIC";
 
     private static final String GERMAN_USER_FILE = "german_user.txt";
     private static final String LATIN_USER_FILE = "latin_user.txt";
+    private static final String ATTIC_USER_FILE = "attic_user.txt";
 
     private static final String GLOBAL_PREFERENCES = "GLOBAL_PREFERENCES";
     private static final String LAST_DECREMENT_TIME = "LAST_DECREMENT_TIME";
@@ -65,6 +64,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final String GERMAN_PREFERENCES = "GERMAN_PREFERENCES";
     private static final String LATIN_PREFERENCES = "LATIN_PREFERENCES";
+    private static final String ATTIC_PREFERENCES = "ATTIC_PREFERENCES";
+
     private static final String DIRECTION_PREFERENCE = "DIRECTION_PREFERENCE";
     private static final String BUCKET_SIZE_PREFERENCE = "BUCKET_SIZE_PREFERENCE";
     private static final String LAPSE_MODE_PREFERENCE = "LAPSE_MODE_PREFERENCE";
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity
     private static final String WORDS_ENCOUNTERED = "WORDS_ENCOUNTERED";
     private static final String WORDS_LAPSED = "WORDS_LAPSED";
 
-    private static final String DEFAULT_LANGUAGE = "GERMAN";
+    private static final String DEFAULT_LANGUAGE = "LATIN";
     private static final int DEFAULT_LAPSE_DECREMENT_HOUR = 3;
 
     private static final int DEFAULT_BUCKET_SIZE = 12;
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity
     private static SharedPreferences global_preferences;
     private static SharedPreferences german_preferences;
     private static SharedPreferences latin_preferences;
+    private static SharedPreferences attic_preferences;
 
     private static String active_language;
     private static String table_name;
@@ -107,6 +109,7 @@ public class MainActivity extends AppCompatActivity
 
     private static boolean newGermanFile;
     private static boolean newLatinFile;
+    private static boolean newAtticFile;
 
     private static TextView main_message;
     private static TextView main_passed;
@@ -117,10 +120,15 @@ public class MainActivity extends AppCompatActivity
     private static TextView trans_view;
     private static LinearLayout check_view;
     private static LinearLayout respond_view;
+    private static LinearLayout next_view;
 
-    private static ImageView mButtonView;
-    private static float arcStart;
-    private static float arcSweep;
+    private static Bitmap b;
+    private static Canvas c;
+    private static Paint p;
+    private static float learnedArcStart;
+    private static float learnedArcSweep;
+    private static float lapsedArcStart;
+    private static float lapsedArcSweep;
 
     private static ArrayList<Integer> round_id;
     private static ArrayList<Integer> round_freq;
@@ -166,6 +174,7 @@ public class MainActivity extends AppCompatActivity
         global_preferences = getSharedPreferences(GLOBAL_PREFERENCES, MODE_PRIVATE);
         german_preferences = getSharedPreferences(GERMAN_PREFERENCES, MODE_PRIVATE);
         latin_preferences = getSharedPreferences(LATIN_PREFERENCES, MODE_PRIVATE);
+        attic_preferences = getSharedPreferences(ATTIC_PREFERENCES, MODE_PRIVATE);
 
         // Set view variables
         main_message = (TextView) findViewById(R.id.main_message);
@@ -177,6 +186,12 @@ public class MainActivity extends AppCompatActivity
         trans_view = (TextView) findViewById(R.id.view_trans);
         check_view = (LinearLayout) findViewById(R.id.view_check);
         respond_view = (LinearLayout) findViewById(R.id.view_respond);
+        next_view = (LinearLayout) findViewById(R.id.view_next);
+
+        // Create button image components
+        b = Bitmap.createBitmap(2000, 2000, Bitmap.Config.ARGB_8888);
+        c = new Canvas(b);
+        p = new Paint();
 
         // Ensure that the most up-to-date data files exist both locally and in cloud.
         updateDataFiles();
@@ -188,11 +203,13 @@ public class MainActivity extends AppCompatActivity
             writableDatabase = langHelper.getWritableDatabase();
             populateDatabase(GERMAN_LANGUAGE);
             populateDatabase(LATIN_LANGUAGE);
+            populateDatabase(ATTIC_LANGUAGE);
         } else {
             langHelper = new LanguageSQLiteOpenHelper(getBaseContext());
             writableDatabase = langHelper.getWritableDatabase();
             if (newGermanFile) populateDatabase(GERMAN_LANGUAGE);
             if (newLatinFile) populateDatabase(LATIN_LANGUAGE);
+            if (newAtticFile) populateDatabase(ATTIC_LANGUAGE);
         }
 
         // Restore previously active language
@@ -209,8 +226,6 @@ public class MainActivity extends AppCompatActivity
 
         // Set/get the language specific preferences
         setLanguage(active_language);
-
-        drawButton();
 
         // Click listener for begin new round button
         View begin_round = findViewById(R.id.begin_round_view);
@@ -232,7 +247,7 @@ public class MainActivity extends AppCompatActivity
         Button check_button = (Button) findViewById(R.id.button_check);
         check_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                checkWord();
+                checkWord(true);
             }
         });
 
@@ -249,6 +264,14 @@ public class MainActivity extends AppCompatActivity
         yes_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onUserRespond(true);
+            }
+        });
+
+        // Click listener for next button
+        Button next_button = (Button) findViewById(R.id.button_next);
+        next_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
             }
         });
 
@@ -308,10 +331,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
 
         switch (id) {
             case R.id.nav_german: setLanguage(GERMAN_LANGUAGE); break;
             case R.id.nav_latin: setLanguage(LATIN_LANGUAGE); break;
+            case R.id.nav_attic: setLanguage(ATTIC_LANGUAGE); break;
             case R.id.nav_add: break;
             case R.id.nav_profile: break;
             case R.id.nav_share: break;
@@ -319,9 +345,8 @@ public class MainActivity extends AppCompatActivity
             default: break;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
+
     }
 
     public void setLanguage(String language) {
@@ -374,13 +399,35 @@ public class MainActivity extends AppCompatActivity
                     latin_editor.apply();
                 }
                 break;
+            case ATTIC_LANGUAGE:
+                active_language = ATTIC_LANGUAGE;
+                table_name = LanguageSQLiteOpenHelper.TABLE_NAME_ATTIC;
+                try {
+                    last_decrement_time = german_preferences.getLong(LAST_DECREMENT_TIME, now_time);
+                    forward_mode = attic_preferences.getBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
+                    bucket_size = attic_preferences.getInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
+                    lapse_mode = attic_preferences.getString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
+                    full_mode = attic_preferences.getBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
+                    decrementLapseDays(now_time);
+                } catch (ClassCastException e) {
+                    SharedPreferences.Editor attic_editor = attic_preferences.edit();
+                    attic_editor.putLong(LAST_DECREMENT_TIME, now_time);
+                    attic_editor.putBoolean(DIRECTION_PREFERENCE, DEFAULT_DIRECTION);
+                    attic_editor.putInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
+                    attic_editor.putString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
+                    attic_editor.putBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
+                    attic_editor.putInt(WORDS_ENCOUNTERED, DEFAULT_WORDS_ENCOUNTERED);
+                    attic_editor.putInt(WORDS_LAPSED, DEFAULT_WORDS_LAPSED);
+                    attic_editor.apply();
+                }
+                break;
         }
 
         SharedPreferences.Editor editor = global_preferences.edit();
         editor.putString(ACTIVE_LANGUAGE, active_language);
         editor.apply();
 
-        // Set variables which define the status bar drawable
+        drawButton();
 
     }
 
@@ -415,6 +462,11 @@ public class MainActivity extends AppCompatActivity
                     latin_editor.putLong(LAST_DECREMENT_TIME, now);
                     latin_editor.apply();
                     break;
+                case ATTIC_LANGUAGE:
+                    SharedPreferences.Editor attic_editor = attic_preferences.edit();
+                    attic_editor.putLong(LAST_DECREMENT_TIME, now);
+                    attic_editor.apply();
+                    break;
             }
 
         }
@@ -436,6 +488,11 @@ public class MainActivity extends AppCompatActivity
                 latin_editor.putBoolean(DIRECTION_PREFERENCE, forward_mode);
                 latin_editor.apply();
                 break;
+            case ATTIC_LANGUAGE:
+                SharedPreferences.Editor attic_editor = attic_preferences.edit();
+                attic_editor.putBoolean(DIRECTION_PREFERENCE, forward_mode);
+                attic_editor.apply();
+                break;
             default: break;
         }
 
@@ -443,9 +500,47 @@ public class MainActivity extends AppCompatActivity
 
     public void drawButton() {
 
-        mButtonView = new ProgressButton(this, arcStart, arcSweep);
+        // Clear the canvas
+        //c.drawColor(ContextCompat.getColor(this, R.color.colorBackground));
+
+        String learnedQuery, lapsedQuery;
+        double learned, lapsed;
+
+        if (forward_mode) {
+            learnedQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 0";
+            lapsedQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE "+ LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 0" + " AND " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " < 1";
+        } else {
+            learnedQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 0";
+            lapsedQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 0" + " AND " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " < 1";
+        }
+
+        Cursor learnedCursor = writableDatabase.rawQuery(learnedQuery, null);
+        Cursor lapsedCursor = writableDatabase.rawQuery(lapsedQuery, null);
+
+        learnedCursor.moveToFirst();
+        lapsedCursor.moveToFirst();
+
+        learned = learnedCursor.getDouble(0);
+        lapsed = lapsedCursor.getDouble(0);
+
+        learnedArcStart = 270;
+        learnedArcSweep = Math.round(360*((learned-lapsed)/learned));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            p.setStyle(Paint.Style.STROKE);
+            p.setAntiAlias(true);
+            p.setStrokeWidth(250);
+            p.setColor(ContextCompat.getColor(this, R.color.colorBlack));
+            c.drawArc(400, 400, 1600, 1600, 0, 360, false, p);
+            p.setStrokeWidth(220);
+            p.setColor(ContextCompat.getColor(this, R.color.colorLapsed));
+            c.drawArc(400, 400, 1600, 1600, 0, 360, false, p);
+            p.setColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            c.drawArc(400, 400, 1600, 1600, learnedArcStart, learnedArcSweep, false, p);
+        }
+
         ImageView begin_round = (ImageView) findViewById(R.id.begin_round_view);
-        begin_round.setImageDrawable(mButtonView);
+        begin_round.setImageBitmap(b);
 
     }
 
@@ -481,10 +576,13 @@ public class MainActivity extends AppCompatActivity
                 file_user = LATIN_USER_FILE;
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_LATIN;
                 break;
+            case ATTIC_LANGUAGE:
+                res_id_data = R.raw.attic_data;
+                file_user = ATTIC_USER_FILE;
+                table_name = LanguageSQLiteOpenHelper.TABLE_NAME_ATTIC;
+                break;
             default: break;
         }
-
-        Resources res = getResources();
 
         // Clear table of old data
         writableDatabase.execSQL("DELETE FROM " + table_name);
@@ -497,7 +595,7 @@ public class MainActivity extends AppCompatActivity
         String word, full, trans;
         long rowID;
 
-        InputStream is = res.openRawResource(res_id_data);
+        InputStream is = getResources().openRawResource(res_id_data);
         BufferedReader brLang = new BufferedReader(new InputStreamReader(is));
 
         ContentValues row = new ContentValues();
@@ -513,7 +611,7 @@ public class MainActivity extends AppCompatActivity
 
             while ((inputLineUser = brUser.readLine()) != null) {
 
-                inputArrayUser = inputLineUser.split(";");
+                inputArrayUser = inputLineUser.split("\\|");
 
                 id_user = Integer.parseInt(inputArrayUser[0]);
                 flevel = Integer.parseInt(inputArrayUser[1]);
@@ -526,7 +624,7 @@ public class MainActivity extends AppCompatActivity
                 while (!match) {
 
                     inputLineLang = brLang.readLine();
-                    inputArrayLang = inputLineLang.split(";");
+                    inputArrayLang = inputLineLang.split("\\|");
 
                     id_lang = Integer.parseInt(inputArrayLang[0]);
                     freq = Integer.parseInt(inputArrayLang[1]);
@@ -572,7 +670,7 @@ public class MainActivity extends AppCompatActivity
             // Copy in any trailing unattempted words into the database
             while ((inputLineLang = brLang.readLine()) != null) {
 
-                inputArrayLang = inputLineLang.split(";");
+                inputArrayLang = inputLineLang.split("\\|");
 
                 id_lang = Integer.parseInt(inputArrayLang[0]);
                 freq = Integer.parseInt(inputArrayLang[1]);
@@ -659,7 +757,6 @@ public class MainActivity extends AppCompatActivity
         int additional = bucket_size - round_id.size();
         if (additional > 0) {
 
-
             if (forward_mode) {
                 newWordQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL +
                         " = 0 ORDER BY " + LanguageSQLiteOpenHelper.COLUMN_FREQ + " ASC LIMIT " + additional;
@@ -697,7 +794,8 @@ public class MainActivity extends AppCompatActivity
         if (round_shuffled.size() > 0) {
             askWord();
         } else {
-
+            // Begin a non-scoring round
+            practiceRound();
         }
 
 
@@ -720,18 +818,36 @@ public class MainActivity extends AppCompatActivity
         respond_view.setVisibility(View.GONE);
         blank_view.setVisibility(View.VISIBLE);
         trans_view.setVisibility(View.GONE);
+        next_view.setVisibility(View.GONE);
 
         findViewById(R.id.language_page).setVisibility(View.GONE);
         findViewById(R.id.practice_page).setVisibility(View.VISIBLE);
 
     }
 
-    public void checkWord () {
+    public void checkWord (boolean score) {
 
         check_view.setVisibility(View.GONE);
         respond_view.setVisibility(View.VISIBLE);
         blank_view.setVisibility(View.GONE);
         trans_view.setVisibility(View.VISIBLE);
+        next_view.setVisibility(View.GONE);
+
+        //
+        if (!score) {
+            respond_view.setVisibility(View.GONE);
+            next_view.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    public void nextWord () {
+
+        if (round_shuffled.size() > 0) {
+            askWord();
+        } else {
+            endPracticeRound();
+        }
 
     }
 
@@ -794,7 +910,20 @@ public class MainActivity extends AppCompatActivity
         main_passed.setText(yes_message);
         main_failed.setText(no_message);
 
-        // Redraw button
+        drawButton();
+
+        // Show practice.xml layout
+        findViewById(R.id.practice_page).setVisibility(View.GONE);
+        findViewById(R.id.language_page).setVisibility(View.VISIBLE);
+
+    }
+
+    public void endPracticeRound() {
+
+        main_message.setText(R.string.practice_complete);
+        main_failed.setText(R.string.practice_message);
+
+        drawButton();
 
         // Show practice.xml layout
         findViewById(R.id.practice_page).setVisibility(View.GONE);
@@ -819,6 +948,7 @@ public class MainActivity extends AppCompatActivity
         switch (language) {
             case GERMAN_LANGUAGE: file = GERMAN_USER_FILE; break;
             case LATIN_LANGUAGE: file = LATIN_USER_FILE; break;
+            case ATTIC_LANGUAGE: file = ATTIC_USER_FILE; break;
         }
 
         String createViewQuery = "CREATE VIEW ordered AS SELECT " +
@@ -847,7 +977,7 @@ public class MainActivity extends AppCompatActivity
                 row.add(viewCursor.getInt(3));
                 row.add(viewCursor.getInt(4));
 
-                CharSequence delimiter = ";";
+                CharSequence delimiter = "|";
                 String joined = TextUtils.join(delimiter, row) + "\n";
                 fos.write(joined.getBytes());
                 row.clear();
@@ -866,6 +996,49 @@ public class MainActivity extends AppCompatActivity
         String dropViewQuery = "DROP VIEW ordered";
         writableDatabase.execSQL(dropViewQuery);
 
+    }
+
+    // Only needed if the entire database has been learned.
+    public void practiceRound() {
+
+        String practiceQuery;
+
+        if (forward_mode) {
+            practiceQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 0 LIMIT + " + bucket_size;
+        } else {
+            practiceQuery = "SELECT * FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 0 LIMIT + " + bucket_size;
+        }
+
+        Cursor newCursor = writableDatabase.rawQuery(practiceQuery, null);
+
+        round_id = new ArrayList<Integer>();
+        round_freq = new ArrayList<Integer>();
+        round_word = new ArrayList<String>();
+        round_full = new ArrayList<String>();
+        round_trans = new ArrayList<String>();
+
+        newCursor.moveToFirst();
+        while (!newCursor.isAfterLast()) {
+            round_id.add(newCursor.getInt(0));
+            round_freq.add(newCursor.getInt(1));
+            round_word.add(newCursor.getString(2));
+            round_full.add(newCursor.getString(3));
+            round_trans.add(newCursor.getString(4));
+            newCursor.moveToNext();
+        }
+        newCursor.close();
+
+        round_shuffled = new ArrayList<Integer>();
+        for (int i = 0; i < round_id.size(); i++) {
+            round_shuffled.add(i);
+        }
+        Collections.shuffle(round_shuffled);
+
+        if (round_shuffled.size() > 0) {
+            askWord();
+        } else {
+
+        }
     }
 
 }

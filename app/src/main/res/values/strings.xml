@@ -8,6 +8,7 @@
 
     <string name="language_german">German</string>
     <string name="language_latin">Latin</string>
+    <string name="language_attic">Ancient Greek</string>
     <string name="language_add">Add New Language</string>
 
     <string name="main_message">Welcome!</string>
@@ -19,10 +20,13 @@
     <string name="check_button">Check</string>
     <string name="yes_button">Yes</string>
     <string name="no_button">No</string>
+    <string name="next_button">Next</string>
 
     <string name="round_complete">Round Complete</string>
     <string name="words_passed">Reinforced:</string>
     <string name="words_failed">Revised:</string>
+    <string name="practice_complete">Practice Round Complete</string>
+    <string name="practice_message">No more words need to be revised today.</string>
 
     <string name="umlaut">&#x2E1A;</string>
 

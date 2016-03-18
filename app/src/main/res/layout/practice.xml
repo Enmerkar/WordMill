@@ -67,6 +67,20 @@
 
     </LinearLayout>
 
+    <LinearLayout android:id="@+id/view_next"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="6"
+        android:orientation="horizontal">
+
+        <Button android:id="@+id/button_next"
+            android:layout_width="@dimen/button_width_long"
+            android:layout_height="@dimen/button_height"
+            android:text="@string/next_button"/>
+
+    </LinearLayout>
+
     <ImageView android:id="@+id/view_progress"
         android:layout_width="match_parent"
         android:layout_height="0px"

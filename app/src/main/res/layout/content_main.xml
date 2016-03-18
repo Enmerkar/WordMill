@@ -41,7 +41,8 @@
     <ImageView android:id="@+id/begin_round_view"
         android:layout_height="0px"
         android:layout_width="match_parent"
-        android:layout_weight="3" />
+        android:layout_weight="3"
+        android:layout_gravity="center" />
 
     <View android:id="@+id/reverse_button_view"
         android:layout_width="match_parent"

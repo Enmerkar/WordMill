@@ -9,6 +9,8 @@
             android:title="@string/language_german" />
             <item android:id="@+id/nav_latin" android:icon="@android:drawable/ic_menu_gallery"
             android:title="@string/language_latin" />
+            <item android:id="@+id/nav_attic" android:icon="@android:drawable/ic_menu_gallery"
+                android:title="@string/language_attic" />
             <item android:id="@+id/nav_add" android:icon="@android:drawable/ic_menu_manage"
                 android:title="@string/language_add" />
         </menu>

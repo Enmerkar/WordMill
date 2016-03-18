@@ -1,3 +1,997 @@
-1;1;habeo;habere, habui, habitum;to have
-2;2;ego;me, mihi, mei;I
-3;3;rex;M. regis, reges;king
+1|1|et| |and
+2|2|sum esse fuī futūrum| |be, exist; fut. infin. often = fore, impf. subj. often = forem for essem
+3|3|quī quae quod| |who, which, what
+4|4|que| |and (postpositive enclitic)
+5|5|in| |in, on (+ abl.); into, onto (+ acc)
+6|6|nōn| |not
+7|7|hic haec hoc| |this, these
+8|8|ille illa illud| |that
+9|9|tū tuī tibi tē| |you (sing.)
+10|10|cum| |with (prep. + abl.); when, since, although (conjunction + subj.)
+11|11|ego meī mihi mē| |I, me
+12|12|quisquam quicquam/quidquam| |any (single) person, anyone at all
+13|13|is ea id| |he, she, it
+14|14|ad| |to, up to, towards (+acc.)
+15|15|ut, utī| |as (+ indic.); so that, with the result that (+ subj.); (in questions) in what manner, how; (exclam.) to what an extent! how!
+16|16|sī| |if
+17|17|sui sibi sē/sēsē| |him- her- itself, themselves
+18|18|omnis -e| |all, every, as a whole
+19|19|nec| |and not, nor; nec ... nec, neither ... nor; → neque
+20|20|sed| |but
+21|21|ā ab abs| |from, by (+abl.)
+22|22|ipse ipsa ipsum| |him- her- itself
+23|23|possum posse potuī| |be able
+24|24|aut| |or
+25|25|māgnus -a -um| |great
+26|26|ex, ē| |out of, from (+ abl.)
+27|27|suus -a -um| |his own, her own, its own
+28|28|dō dare dedī datum| |give
+29|29|quam| |how?; (after comparative) than
+30|30|per| |through (+acc.)
+31|31|videō vidēre vīdī vīsum| |see
+32|32|faciō facere fēcī factum| |do, make
+33|33|dīcō dīcere dīxī dictum| |say; causam dīcere, plead a case; diem dīcere, appoint a day
+34|34|iam| |now; already
+35|35|atque| |and in addition, and also, and; (after comparatives) than; simul atque, as soon as; → ac
+36|36|ac| |and in addition, and also, and; (after comparatives) than; simul ac, as soon as; → atque
+37|37|alius -a -ud| |other, another; ālias: at another time
+38|38|rēs reī f.| |thing (rēs pūblica, commonwealth; rēs familiāris, family property, estate; rēs mīlitāris, art of war; rēs novae, revolution)
+39|39|habeō habēre habuī habitum| |have, hold
+40|40|animus -ī m.| |spirit, mind
+41|41|meus -a -um| |my
+42|42|deus -ī m.; dea -ae f.| |god; goddess
+43|43|multus -a -um| |much, many; multō, by far
+44|44|tuus -a -um| |your
+45|45|ferō ferre tulī lātum| |bear, carry, endure
+46|46|dē| |down from, about, concerning (+ abl.)
+47|47|nē| |lest, that not
+48|48|manus -ūs f.| |hand; band of men
+49|49|nūllus -a -um| |not any, no one
+50|50|nunc| |now
+51|51|nōs nostrum/nostrī nōbīs nōs| |we
+52|52|noster nostra nostrum| |our
+53|53|ūnus -a -um| |one
+54|54|diēs diēī m./f.| |day
+55|55|nihil, nīl| |nothing; not at all
+56|56|tum or tunc| |then
+57|57|enim| |for, indeed
+58|58|tamen| |nevertheless, still
+59|59|īdem eadem idem| |the same
+60|60|rēx rēgis m.| |king
+61|61|nam or namque| |for, indeed, really
+62|62|locus -ī m.| |place; loca (n. pl.) region
+63|63|veniō venīre vēnī ventum| |come
+64|64|inter| |between, among; during (+ acc.)
+65|65|pars partis f.| |part
+66|66|volō velle voluī| |wish, be willing
+67|67|etiam| |also, even
+68|68|bonus -a -um| |good
+69|69|agō agere ēgī āctum| |drive, do, act
+70|70|terra -ae f.| |land
+71|71|pater patris m.| |father, ancestor
+72|72|neque| |and not, nor; neque ... neque, neither ... nor; → nec
+73|73|domus -ūs f.| |house, home
+74|74|at| |but, but yet
+75|75|corpus corporis n.| |body
+76|76|quoque| |also, too
+77|77|aliquis -quae -quod| |some, any; si quis, si quid: anyone who, anything that
+78|78|tōtus -a -um| |whole, entire
+79|79|sīc| |in this manner, thus; sīc ... ut: in the same way as
+80|80|hīc| |here; hinc: from here
+81|81|iste ista istud| |that, that of yours; adv. istīc or istūc: over there; istinc: from over there
+82|82|urbs urbis f.| |city
+83|83|petō petere petīvī petītum| |seek, aim at
+84|84|iubeō iubēre iussī iussum| |bid, order
+85|85|vir virī m.| |man
+86|86|bellum -ī n.| |war
+87|87|vīta -ae f.| |life
+88|88|homō hominis m.| |human being
+89|89|tempus -oris n.| |time
+90|90|magis| |more
+91|91|prīmus -a -um| |first
+92|92|ubi| |where, when
+93|93|hostis -is m./f.| |stranger, enemy
+94|94|an| |or (in questions); utrum ... an: whether ... or
+95|95|mors mortis f.| |death
+96|96|tam| |so, so much
+97|97|eō īre iī/īvī itum| |go
+98|98|arma -ōrum n. pl.| |arms, weapons
+99|99|superus -a -um| |situated above, upper
+100|100|nisi, nī| |if not, unless
+101|101|vincō vincere vīcī victum| |conquer
+102|102|pōnō pōnere posuī positum| |put, place; put aside
+103|103|dum| |while (+ indic.); until (+ subj.); provided that (+ subj.)
+104|104|sine| |without (+ abl.)
+105|105|tantus -a -um| |so great, so much; (as pronoun) such a quantity, so much; tantī, at such a price, of such worth
+106|106|teneō -ēre -uī tentum| |hold, keep
+107|107|causa -ae f.| |cause, reason; causā + preceding genitive, for the sake of
+108|108|sequor sequī secūtus sum| |follow
+109|109|crēdō crēdere crēdidī crēditum| |believe
+110|110|accipiō -cipere -cēpī -ceptum| |receive
+111|111|virtūs -ūtis f.| |valor, manliness, virtue
+112|112|ante| |before, in front of (adv. and prep. + acc.)
+113|113|quaerō -rere -sīvī -sītum| |seek, inquire
+114|114|mittō mittere mīsī missum| |send, let go
+115|115|vīs f.| |force; (acc.) vim, (abl.) vī; (pl.) vīrēs, strength
+116|116|amor -ōris m.| |love
+117|117|caelum -ī n.| |sky, heavens
+118|118|sub| |under, close to (+acc. or abl.)
+119|119|nox noctis f.| |night
+120|120|ita| |thus, so
+121|121|rēgnum -ī n.| |kingship, kingdom
+122|122|populus -ī m.| |people
+123|123|autem| |moreover, but, however
+124|124|caput capitis n.| |head
+125|125|mare -is n.| |sea
+126|126|quīdam quaedam quoddam| |a certain one, someone
+127|127|māter mātris f.| |mother
+128|128|prō| |for, on behalf of, in proportion to (+abl.)
+129|129|quisquis quidquid| |whoever, whichever
+130|130|vōs| |you (pl.); (gen.) vestrum/vestrī, (dat./abl.) vōbīs, (acc.) vōs
+131|131|capiō capere cēpī captum| |seize
+132|132|quia| |because
+133|133|dūcō dūcere dūxī ductum| |lead; uxōrem dūcere, marry
+134|134|ergō| |therefore
+135|135|nōmen -inis n.| |name
+136|136|quidem| |certainly, at least
+137|137|miser misera miserum| |wretched, pitiable
+138|138|fortūna -ae f.| |fortune
+139|139|novus -a -um| |new
+140|140|gravis -e| |heavy, serious
+141|141|vel| |or else, or; even; vel ... vel: either … or
+142|142|longus -a -um| |long, far
+143|143|parvus -a -um| |small
+144|144|relinquō -linquere -līquī -lictum| |abandon
+145|145|saepe| |often
+146|146|fīō fierī factus sum| |become, happen, be done
+147|147|ōs ōris n.| |mouth, face
+148|148|alter altera alterum| |other of two
+149|149|semper| |always, ever
+150|150|deinde/dein| |then, next
+151|151|ignis -is m.| |fire
+152|152|modo| |just, just now; modo ... modo: now ... now, at one moment ... at another, sometimes ... sometimes
+153|153|timeō -ēre -uī| |to fear, to dread
+154|154|scelus -eris n.| |crime, sin
+155|155|dēbeō dēbēre dēbuī dēbitum| |owe, be obliged
+156|156|vīvō vīvere vīxī vīctum| |live
+157|157|fātum -ī n.| |fate; death
+158|158|vocō -āre| |call
+159|159|altus -a -um| |high, lofty; deep
+160|160|parō -āre| |prepare, acquire; parātus -a -um, ready
+161|161|mīles -itis m.| |soldier
+162|162|medius -a -um| |middle, central
+163|163|inquam, inquis, inquit, inquiunt:| |say (used with direct speech)
+164|164|post| |after (adv. and prep. +acc.)
+165|165|audiō -īre -īvī/-iī -ītum| |hear, listen to
+166|166|putō -āre| |think, suppose
+167|167|annus -ī m.| |year
+168|168|stō stāre stetī statum| |stand
+169|169|vōx vōcis f.| |voice, utterance
+170|170|genus generis n.| |origin, lineage, kind
+171|171|referō referre rettulī relātum| |bring back; report
+172|172|sciō -īre -īvī/-iī -ītum| |know
+173|173|mēns mentis f.| |mind
+174|174|reddō -dere -didī -ditum| |return, give back
+175|175|licet licēre licuit licitum est| |it is permitted (+ dat. + infin.)
+176|176|sōlus -a -um| |only, alone
+177|177|fugiō fugere fūgī fugitum| |flee, escape
+178|178|ūllus -a -um| |any, anyone
+179|179|nēmō| |no one (gen. nūllīus, dat. nūllī, abl. nūllō or nūllā → nūllus -a -um)
+180|180|nātūra -ae f.| |nature
+181|181|mōs mōris m.| |custom, habit; (pl.) character
+182|182|beneficium -ī n.| |service, kindness
+183|183|pectus -oris n.| |chest, breast
+184|184|fidēs -eī f.| |trust, faith
+185|185|patior patī passus sum| |permit, endure
+186|186|cūra -ae f.| |care, concern
+187|187|īra irae f.| |wrath, anger
+188|188|verbum -ī n.| |word
+189|189|prope| |near, next; (comp.) propior, (superl.) proximus; (adv.) prope, nearly, almost
+190|190|parēns -ntis m./f.| |parent
+191|191|puer puerī m.| |boy; slave
+192|192|moveō -ēre mōvī mōtum| |move
+193|193|dolor -ōris m.| |pain, grief
+194|194|gēns gentis f.| |family, clan
+195|195|modus -ī m.| |measure, manner, kind
+196|196|via -ae f.| |way, street
+197|197|quisque quaeque quidque| |each one, everyone
+198|198|amīcus -a -um| |friendly; (as subst.) friend
+199|199|pēs pedis m.| |foot
+200|200|imperium -ī n.| |command, power
+201|201|labor -ōris m.| |toil, exertion
+202|202|ingēns ingentis| |huge, enormous
+203|203|tālis tāle| |such
+204|204|parum| |too little
+205|205|apud| |near, in the presence of (+acc.)
+206|206|oculus -ī m.| |eye
+207|207|unda -ae f.| |wave, flowing water, water
+208|208|itaque| |and so, therefore
+209|209|vultus -ūs m.| |look, expression, face
+210|210|cadō cadere cecidī cāsum| |fall, be killed
+211|211|nātus -ī m.| |son
+212|212|quis quid| |who? what? which?
+213|213|trahō trahere trāxī trāctum| |drag, draw
+214|214|sanguis -inis m.| |blood
+215|215|metus -ūs m.| |fear, dread
+216|216|tantum, tantummodo| |only
+217|217|cōnsilium -ī n.| |plan; council, group of advisors
+218|218|coniunx coniugis m./f.| |spouse, husband, wife
+219|219|amō -āre| |to love; amāns -ntis m./f.: lover
+220|220|levis -e| |light, trivial
+221|221|duo duae duo| |two
+222|222|ferus -a -um| |wild, fierce; fera -ae f.: wild animal
+223|223|poena -ae f.| |penalty, punishment
+224|224|castrum -ī n.| |fortress, (regularly plural, castra camp)
+225|225|frāter frātris m.| |brother
+226|226|haud| |not
+227|227|malus -a -um| |bad, evil
+228|228|iaceō iacēre iacuī| |lie
+229|229|līber lībera līberum| |free; līberī (m. pl.): freeborn children
+230|230|iter itineris n.| |journey, route
+231|231|ferrum -ī n.| |iron, iron weapon or implement
+232|232|spēs speī f.| |hope
+233|233|puella -ae f.| |girl; girl-friend
+234|234|silva -ae f.| |forest, grove
+235|235|bene| |well
+236|236|fīnis -is m.| |end, boundary
+237|237|gerō gerere gessī gestum| |bear, manage; bellum gerere, wage war
+238|238|ne (enclitic)| |interrogative particle attached to the emphatic word in a question
+239|239|dux ducis m./f.| |leader, general
+240|240|premō premere pressī pressum| |press, pursue, overwhelm
+241|241|dominus -ī m.; domina -ae f.| |household master, lord; mistress
+242|242|mōns montis m.| |mountain
+243|243|uterque utraque utrumque| |each of two
+244|244|saevus -a -um| |fierce, raging, wrathful
+245|245|lītus -oris n.| |shore
+246|246|soleō -ēre -uī -itum| |be accustomed
+247|247|mīlle (pl.) mīlia| |thousand
+248|248|equus -ī m.| |horse
+249|249|dūrus -a -um| |hard, tough, harsh
+250|250|cōgō cōgere coēgī coāctum| |drive together; compel
+251|251|numquam| |never
+252|252|prīmum| |at first, firstly
+253|253|morior morī mortuus sum| |die
+254|254|carmen -inis n.| |song
+255|255|tēlum -ī n.| |missile, weapon, spear
+256|256|ratiō -ōnis f.| |method, plan, reason
+257|257|umbra -ae f.| |shade, shadow
+258|258|ars artis f.| |skill
+259|259|tot| |so many
+260|260|dexter -tra -trum| |right; dextera -ae f.: right hand
+261|261|sīgnum -ī n.| |sign, standard, mark
+262|262|laetus -a -um| |glad, joyful
+263|263|quālis -e| |of what kind? what?
+264|264|lēx lēgis f.| |law
+265|265|perīculum -ī n.| |danger
+266|266|nāscor nāscī nātus sum| |be born
+267|267|exercitus -ūs m.| |army
+268|268|pereō -īre -iī -itum| |perish, be lost
+269|269|ventus -ī m.| |wind
+270|270|audeō audēre ausus sum| |dare, be eager
+271|271|contrā| |against, opposite (adv. and prep. +acc.)
+272|272|aqua -ae f.| |water
+273|273|rapiō rapere rapuī raptum| |seize, tear away
+274|274|simul| |at the same time
+275|275|trīstis -e| |sad, solemn, grim
+276|276|mūnus mūneris n.| |gift, offering; duty, obligation; (pl.) gladiatorial show
+277|277|iuvenis -is m.| |youth
+278|278|fāma -ae f.| |rumor, fame
+279|279|adsum adesse affuī| |be present
+280|280|vērō| |in fact, certainly, without doubt
+281|281|pār paris| |equal
+282|282|vester vestra vestrum| |your
+283|283|flūmen -inis n.| |stream, river
+284|284|quīcumque quaecumque quodcumque| |who-, whatever
+285|285|certus -a -um| |sure, fixed
+286|286|fortis -e| |brave
+287|287|placeō placēre placuī placitum| |please
+288|288|vertō vertere vertī versum| |turn
+289|289|servō -āre| |save, watch over
+290|290|honor -ōris m.| |honor, glory; office, post
+291|291|dīgnus -a -um| |worthy
+292|292|cūnctus -a -um| |entire all together
+293|293|tollō tollere sustulī sublātum| |raise up, destroy
+294|294|negō -āre| |deny, refuse
+295|295|vetus veteris| |old
+296|296|eques equitis m.| |horseman, knight
+297|297|trādō -dere -didī -ditum| |hand over, yield
+298|298|flamma -ae f.| |flame, fire
+299|299|lūx lūcis f.| |light of day
+300|300|unde| |from where
+301|301|redeō -īre -iī -itum| |go back, return
+302|302|sentiō sentīre sēnsī sēnsum| |perceive, feel, hear, see
+303|303|aurum -ī n.| |gold
+304|304|cēdō cēdere cessī cessum| |go, move; yield
+305|305|quō| |for which reason; to or in what place; to what end, for what purpose?
+306|306|saxum -ī n.| |rock, cliff, crag
+307|307|ve| |or (postpositive enclitic)
+308|308|aetās -tātis f.| |age, time of life
+309|309|fēlīx -īcis| |lucky
+310|310|loquor loquī locūtus sum| |speak, talk
+311|311|quantus -a -um| |(interr.) how great? (rel.) of what size, amount, etc. (as subst.) what amount? (rel.) which amount; quantī, at what price? (rel.) at which price
+312|312|coepī coepisse coeptus| |begin
+313|313|igitur| |therefore
+314|314|iūs iūris n.| |right, justice, law
+315|315|mūtō -āre| |change
+316|316|inveniō -venīre -vēnī -ventum| |find; discover
+317|317|prīnceps -cipis| |first, chief; (as subst.) leader, person in charge
+318|318|ops opis f.| |assistance, resources
+319|319|recipiō -cipere -cēpī -ceptum| |take back, receive; sē recipere, betake oneself, go
+320|320|sōl sōlis m.| |sun
+321|321|cōnsul -ulis m.| |consul
+322|322|orbis -is m.| |circle; orbis terrārum: world
+323|323|turba -ae f.| |crowd, uproar
+324|324|ager agrī m.| |field
+325|325|solvō solvere solvī solūtum| |release, set sail
+326|326|vitium -ī n.| |flaw, fault, crime
+327|327|vulnus -eris n.| |wound
+328|328|inde| |from there, from then
+329|329|senātus -ūs m.| |senate
+330|330|ūtor ūtī ūsus sum| |use, consume, employ (+ abl.)
+331|331|cōpia -ae f.| |abundance; (pl.) troops
+332|332|opus operis n.| |work
+333|333|colō colere coluī cultum| |inhabit, cultivate
+334|334|vōtum -ī n.| |solemn promise, vow; hope
+335|335|iugum -ī n.| |yoke; ridge, chain of hills
+336|336|quā| |where, how
+337|337|tellus tellūris f.| |earth
+338|338|numerus -ī m.| |number, amount
+339|339|cōgnōscō -gnōscere -gnōvī -gnitum| |learn, understand
+340|340|victor -ōris m.| |conqueror
+341|341|satis, sat| |enough, sufficient, sufficiently
+342|342|patria -ae f.| |fatherland, country
+343|343|seu| |whether; seu ... seu: whether ... or → sīve
+344|344|cāsus -ūs m.| |a fall; chance, accident
+345|345|frangō frangere frēgī frāctum| |break, shatter
+346|346|cīvitās -ātis f.| |citizenship, state
+347|347|nōscō nōscere nōvī nōtum| |learn, know
+348|348|proelium -ī n.| |battle
+349|349|ēripiō -ripere -ripuī -reptum| |snatch away, rescue, save
+350|350|mundus -ī m.| |world, universe, heavens
+351|351|cursus -ūs m.| |course, advance
+352|352|vix| |scarcely
+353|353|nāvis -is f.| |ship
+354|354|lacrima -ae f.| |tear
+355|355|hūmānus -a -um| |human
+356|356|mollis -e| |soft, yielding, gentle
+357|357|maneō manēre mānsī mānsum| |remain
+358|358|āgmen -minis n.| |line of march
+359|359|sīdus -eris n.| |star, constellation
+360|360|glōria -ae f.| |glory, fame
+361|361|diū:| |for a long time
+362|362|sīve| |whether; sīve ... sīve: whether ... or → seu
+363|363|tamquam| |so as, just as
+364|364|fuga -ae f.| |flight, route
+365|365|tūtus -a -um| |safe, protected
+366|366|auris -is f.| |ear
+367|367|aliēnus -a -um| |foreign, strange
+368|368|hūc| |to this place
+369|369|taceō -ēre -uī -itum| |be silent; tacitus -a -um, silent
+370|370|legiō -ōnis f.| |legion
+371|371|ostendō ostendere ostendī ostentum| |show, hold out
+372|372|socius -a -um| |friendly, allied; socius -ī m.: partner, comrade
+373|373|prōsum prodesse profuī| |be of use, do good, help (+ dat.)
+374|374|āra -ae f.| |altar
+375|375|lūmen luminis n.| |light
+376|376|tegō tegere tēxī tēctum| |cover, conceal
+377|377|turpis -e| |ugly, unsightly; disgraceful
+378|378|voluptās -ātis f.| |pleasure, enjoyment
+379|379|adhūc| |thus far, to this point
+380|380|grātia -ae f.| |favor, influence, gratitude
+381|381|iniūria -ae f.:| |injustice, wrong, affront
+382|382|latus -eris n.| |side, flank
+383|383|dulcis -e| |sweet
+384|384|postquam| |after
+385|385|extrēmus -a -um| |farthest, situated at the end or tip, extreme
+386|386|tēctum -ī n.| |roof; building, house
+387|387|ingenium -ī n.| |disposition, ability, talent
+388|388|pāx pācis f.| |peace
+389|389|canō canere cecinī cantum| |sing
+390|390|iuvō iuvāre iūvī iūtum| |help, assist; please, delight
+391|391|campus -ī m.| |plain, field
+392|392|claudō claudere clausī clausum| |close, shut
+393|393|doceō -ēre -uī doctum| |teach
+394|394|excipiō -cipere -cēpī -ceptum| |take out
+395|395|clārus -a -um| |clear, distinguished
+396|396|illīc| |at that place, there; illinc: from that place
+397|397|procul| |at a distance
+398|398|sacer sacra sacrum| |holy, sacred
+399|399|mora -ae f.| |delay, hindrance
+400|400|longē| |far, far off
+401|401|super| |over (adv. and prep. +acc.)
+402|402|errō -āre| |go astray, wander
+403|403|sēdēs -is f.| |seat, abode, habitation
+404|404|cūr| |why?
+405|405|coma -ae f.| |hair, tresses
+406|406|aiō| |say, affirm, say yes; ut āiunt: as they say
+407|407|gaudeō gaudēre gāvīsus sum| |rejoice
+408|408|beātus -a -um| |happy, blessed, prosperous, fortunate
+409|409|perveniō -venīre -vēnī -ventum| |arrive, reach
+410|410|vērus -a -um| |TRUE
+411|411|incipiō -cipere -cēpī -ceptum| |begin
+412|412|parcō parcere pepercī parsum| |spare, be sparing of (+ dat.)
+413|413|vestis -is f.| |garment, robe, clothing
+414|414|similis -e| |like, similar
+415|415|caedēs -is f.| |killing, slaughter
+416|416|ōrdō -īnis m.| |order, rank
+417|417|optō -āre| |choose, select
+418|418|virgō -inis f.| |maiden, virgin, girl
+419|419|legō legere lēgī lēctum| |gather, choose, read
+420|420|aura -ae f.| |breeze
+421|421|impetus -ūs m.| |attack
+422|422|fōrma -ae f.| |shape; beauty
+423|423|praestō -stāre -stitī -stitum| |excel, exhibit
+424|424|aequor aequoris n.| |level surface, sea, plain
+425|425|misceō miscēre miscuī mixtum| |mix
+426|426|spatium -ī n.| |space
+427|427|tandem| |finally
+428|428|īnferus -a -um| |low; īnferior: lower; īnfimus or īmus: lowest
+429|429|metuō metuere metuī| |to fear, to dread
+430|430|temptō -āre| |try, test
+431|431|trānseō -īre -iī -itum| |go across
+432|432|ultimus -a -um| |farthest, final, last, ultimate
+433|433|addō -dere -didī -ditum| |give to
+434|434|grātus -a -um| |pleasant; grateful
+435|435|laudō -āre| |praise
+436|436|nōndum| |not yet
+437|437|impōnō -ere -posuī -positum| |put in, put on, impose, levy upon
+438|438|somnus -ī m.| |sleep, slumber; (pl.) dreams
+439|439|aciēs -ēī f.| |edge; line of battle
+440|440|rūrsus| |back, again
+441|441|cupiō -ere -īvī -ītum| |desire
+442|442|exspectō -āre| |watch, wait, expect
+443|443|compōnō -pōnere posuī positum| |build, construct, arrange
+444|444|laus laudis f.| |praise, glory
+445|445|absum abesse āfuī| |be away, absent
+446|446|ūsus -ūs m.| |use, experience
+447|447|velut| |even as, just as
+448|448|comes comitis m./f.| |companion, comrade; attendant, follower
+449|449|ob| |against, on account of (+acc)
+450|450|studium -ī n.| |eagerness, zeal
+451|451|facilis -e| |easy
+452|452|nūmen -inis n.| |divine will, deity
+453|453|sapiēns -ntis| |wise; (as subst.) wise man, sage, philosopher
+454|454|sūmō sūmere sūmpsī sūmptum| |take up
+455|455|nōbilis -e| |distinguished, noble; (as subst.) a nobleman or woman
+456|456|quīn| |(adv.) indeed, in fact; (conjunction) so that ... not (+ subj.)
+457|457|fleō flēre flēvī flētum| |weep
+458|458|nōlō nōlle nōluī| |be unwilling
+459|459|plēnus -a -um| |full
+460|460|adversus (-um)| |(adv. and prep.) facing, opposite, against, opposed (to)
+461|461|nemus nemoris n.| |grove, forest
+462|462|cārus -a -um| |dear
+463|463|dēsum -esse -fuī| |be lacking
+464|464|lēgātus -ī m.| |lieutenant, envoy
+465|465|discō -ere didicī| |learn
+466|466|furor -ōris m.| |rage, fury
+467|467|amnis -is m.| |river, torrent
+468|468|arbor arboris f.| |tree
+469|469|mox| |soon
+470|470|eō| |(adv.) there, to that place
+471|471|cīvis -is m./f.| |citizen
+472|472|occupō -āre| |seize, occupy; anticipate, do a thing first (+ infin.)
+473|473|spectō -āre| |look at, consider
+474|474|tergum -ī n.| |back, rear; ā tergō: from the rear
+475|475|crīmen -inis n.| |verdict, accusation
+476|476|dōnum -ī n.| |gift, present
+477|477|nōtus -a -um| |well-known
+478|478|sinus -ūs m.| |fold of a garment; lap, bay, gulf
+479|479|faciēs -ēī f.| |form, appearance
+480|480|rumpō rumpere rūpī ruptum| |break, rupture
+481|481|membrum -ī n.| |limb, member of the body
+482|482|umquam| |ever
+483|483|aspiciō -ere -spēxī -spectum| |look to or at, behold
+484|484|prius or priusquam| |before
+485|485|templum -ī n.| |consecrated ground; temple
+486|486|āmittō -mittere -mīsī -missum| |let go, send away
+487|487|pōscō pōscere popōscī| |demand, claim; inquire into
+488|488|perdō -dere -didī -ditum| |destroy
+489|489|quamvīs| |however you like; although
+490|490|tener -era -erum| |tender
+491|491|currus -ūs m.| |chariot
+492|492|precor -ārī| |pray, invoke
+493|493|anima -ae f.| |breath, spirit
+494|494|contingō -tingere -tigī -tactum| |touch, be contiguous to
+495|495|lībertās -ātis f.| |freedom
+496|496|servus -ī m.| |slave
+497|497|soror -ōris f.| |sister
+498|498|fluctus -ūs m| |flood, billow, surf
+499|499|quīppe| |(adv.) indeed, surely
+500|500|exigō -igere -ēgī -āctum| |drive out; collect
+501|501|fēmina -ae f.| |woman
+502|502|nimius -a -um| |too much, excessive
+503|503|fallō fallere fefellī falsum| |deceive
+504|504|mīror mīrārī mīrātus sum| |wonder at, marvel at (+ acc.)
+505|505|classis -is f.| |class, division, fleet
+506|506|sedeō sedēre sēdī sessum| |sit
+507|507|singulī -ae -a| |one each
+508|508|mūrus -ī m.| |wall
+509|509|noceō nocēre nocuī| |harm
+510|510|quoniam| |since, seeing that
+511|511|fax facis f.| |torch
+512|512|intellegō -legere -lēxī -lēctum:| |understand
+513|513|iungō iungere iūnxī iūnctum| |join
+514|514|afferō afferre attulī allātum| |bring to
+515|515|cōgitō -āre| |think, reflect
+516|516|līmen līminis n.| |threshold
+517|517|pūblicus -a -um| |public, belonging to the state
+518|518|queror querī questus sum| |complain of, lament
+519|519|exemplum -ī n.| |example, sample, copy
+520|520|prex precis f.| |prayers, entreaties
+521|521|dubitō -āre| |hesitate, doubt
+522|522|odium -ī n.| |hatred
+523|523|fundō fundere fūdī fūsum| |pour, scatter
+524|524|fūnus fūneris n.| |funeral; death; dead body
+525|525|nesciō -scīre| |not know, be ignorant
+526|526|prior prius| |earlier, preceding
+527|527|ūsque| |up to; continuously
+528|528|dubius -a -um| |doubtful; (as subst.) a doubt; sine dubiō, without a doubt, certainly
+529|529|tendō tendere tetendī tentum| |stretch, extend, direct (one’s steps or course)
+530|530|pecūnia -ae f.| |money
+531|531|quemadmodum| |in what manner, how
+532|532|spargō spargere sparsī sparsum| |scatter
+533|533|trēs tria| |three
+534|534|tangō tangere tetigī tāctum| |touch
+535|535|respondeō -spondēre -spondī -spōnsum| |answer
+536|536|timor -ōris m.| |fear
+537|537|properō -āre| |hasten, speed
+538|538|subeō -īre -iī -itum| |go under; endure
+539|539|valeō valēre valuī| |be strong, excel, be valid, prevail; valē: farewell!
+540|540|condō -dere -didī -ditum| |build, found; store up; hide, conceal
+541|541|nefās n. indecl.| |impiety, wickedness
+542|542|quondam| |formerly, once
+543|543|auxilium -ī n.| |support, assistance; (pl.) auxiliary forces
+544|544|dēserō -ere dēseruī dēsertum| |leave, desert, abandon
+545|545|nūdus -a -um| |naked, bare
+546|546|auctor -ōris m.| |originator, founder
+547|547|animal -ālis n.| |a living being, an animal
+548|548|decus decoris n.| |beauty, grace; ornament, glory, honor
+549|549|salūs -ūtis f.| |health, safety
+550|550|pateō patēre patuī| |lie open, extend; be evident or obvious
+551|551|rogō -āre| |ask
+552|552|uxor uxōris f.| |wife
+553|553|abeō -īre -iī -itum| |go away
+554|554|regō regere rēxī rēctum| |guide, rule
+555|555|adeō| |(adv.) to such a degree, so
+556|556|auferō auferre abstulī ablātum| |take away
+557|557|quantum| |(adv.) how much? how greatly? how much! how greatly! as much as
+558|558|senex -is m.| |old man, elder; senior, older
+559|559|frōns frontis f.| |forehead, brow; front
+560|560|propter| |because of (+ acc.)
+561|561|rēgius -a -um| |kingly, royal
+562|562|currō currere cucurrī cursum| |run
+563|563|pellō pellere pepulī pulsum| |strike, beat, push, drive
+564|564|dīves dīvitis| |rich (poet. dīs, dītis)
+565|565|iūdicō -āre| |judge, decide
+566|566|pecus -oris n.| |cattle, sheep
+567|567|potēns potentis| |able, powerful
+568|568|scrībō scrībere scrīpsī scrīptum| |write
+569|569|pulcher -chra -chrum| |beautiful
+570|570|surgō surgere surrēxī surrēctum| |rise
+571|571|cēterum| |for the rest, in addition, however, that may be
+572|572|careō -ēre -uī| |lack (+ abl.)
+573|573|efficiō -ficere -fēcī -fectum| |bring about, complete; render (+ ut + subj.)
+574|574|ōlim| |formerly, at that time
+575|575|sermō -ōnis m.| |conversation, discourse
+576|576|exerceō -ercēre -ercuī -ercitum| |train, exercise, carry on
+577|577|gradus -ūs m.| |step, pace; grade, rank
+578|578|agitō -āre| |drive
+579|579|fortē| |by chance
+580|580|honestus -a -um| |honorable
+581|581|moror morārī morātus sum| |delay
+582|582|praesidium -ī n.| |garrison, protection
+583|583|sonō sonāre sonuī sonitum| |sound, resound
+584|584|praebeō -ēre -uī -itum| |furnish, supply, render
+585|585|regiō -ōnis f.| |boundary, region
+586|586|sententia -ae f.| |opinion, judgment
+587|587|ācer ācris ācre| |sharp, piercing
+588|588|suprā| |above, beyond (adv. and prep. +acc.)
+589|589|brevis -e| |short, shallow, brief
+590|590|citus -a -um| |swift; citō swiftly
+591|591|cornu -ūs n.| |horn
+592|592|ingrātus -a -um:| |unpleasant, disagreeable
+593|593|moenia -ium n. pl.| |walls, fortifications
+594|594|vinculum -ī n.| |bond, fetter, tie
+595|595|adeō -īre -iī -itum| |go to
+596|596|cēterus -a -um| |the other, the others, the rest
+597|597|exeō -īre -iī -itum| |go forth
+598|598|mālō mālle māluī| |prefer
+599|599|speciēs -ēī f.| |aspect, appearance
+600|600|ultrā| |beyond, further (adv. and prep. + acc.)
+601|601|certē| |certainly, surely
+602|602|imperō -āre| |command, control
+603|603|male| |(adv.) badly
+604|604|prohibeō -ēre -uī -itum| |restrain, keep away
+605|605|clāmor -ōris m.| |outcry, shout
+606|606|dōnō -āre| |present with a gift (+ acc. of person and abl. of thing)
+607|607|officium -ī n.| |service, duty
+608|608|committō -mittere -mīsī -missum| |join, entrust to (+ dat.); perform, do
+609|609|crēscō crēscere crēvī crētum| |grow, increase
+610|610|aequus -a -um| |equal
+611|611|factum -ī n.| |deed, accomplishment
+612|612|caedō caedere cecīdī caesum| |strike, kill, cut down
+613|613|exīstimō -āre| |think, believe
+614|614|accēdō -cēdere -cessī -cessum| |approach
+615|615|contemnō -temnere -tempsī -temptum| |despise, scorn, disdain
+616|616|pudor pudōris m.| |sense of shame, modesty, propriety
+617|617|antīquus -a -um| |ancient, old-time, former
+618|618|ārdeō ārdēre ārsī ārsum| |blaze, glow; be eager
+619|619|ibi| |there
+620|620|prōvincia -ae f.| |province; official duty
+621|621|quandō| |when?; since; sī quandō: if ever
+622|622|custōs custōdis m.| |guardian
+623|623|supersum -esse -fuī| |remain, survive; be superfluous (to)
+624|624|dēsinō -sinere -siī -situm| |leave off, cease
+625|625|fessus -a -um| |weary, tired
+626|626|praeda -ae f.| |booty, prey
+627|627|memoria -ae f.| |recollection, memory
+628|628|dīvidō -ere dīvīsī dīvīsum| |divide, separate
+629|629|pretium -ī n.| |price, worth, reward; pretium operae: a reward for trouble
+630|630|pontus -ī m.| |the open sea, the deep
+631|631|varius -a -um| |changing, varied, various
+632|632|vehō vehere vēxī vectum| |carry; vehor vehī vectus sum: travel, ride
+633|633|falsus -a -um| |deceptive, false
+634|634|niger nigra nigrum| |black
+635|635|oppidum -ī n.| |town
+636|636|pondus ponderis n.| |weight
+637|637|arvum -ī n.| |ploughed land, field
+638|638|arx arcis f.| |citadel, castle; summit
+639|639|sors sortis f.| |lot, fate, destiny; oracle
+640|640|vīnum -ī n.| |vine, wine
+641|641|dīversus -a -um| |different, diverse
+642|642|orior orīrī ortus sum| |arise, begin
+643|643|ecce| |behold!
+644|644|quamquam| |however, although
+645|645|cōnferō cōnferre contulī collātum| |collect, bring to
+646|646|facinus facinoris n.| |deed, crime
+647|647|retineō -tinēre -tinuī -tentum| |hold back, keep
+648|648|spērō -āre| |to hope
+649|649|plēbs plēbis f.| |the common people
+650|650|pūgna -ae f.| |fist-fight; battle
+651|651|repetō -petere -petīvī -petītum| |demand, exact; revisit; call to mind, recollect; repeat
+652|652|cōnstituō -stituere -stituī -stitūtum| |establish, put together
+653|653|dēfendō -fendere -fendī -fēnsum| |defend, ward off
+654|654|marītus -ī m.| |husband
+655|655|cernō cernere crēvī crētum| |discern, separate
+656|656|superbus -a -um| |overbearing, proud, haughty
+657|657|adversus -a -um| |facing, opposed; unfavorable
+658|658|morbus -ī m.| |sickness, disease
+659|659|sānctus -a -um| |sacred, inviolable
+660|660|commūnis -e| |common, general
+661|661|dēdūcō -dūcere -dūxī -ductum| |launch, lead away
+662|662|rīpa -ae f.| |bank of a river
+663|663|concēdō -cēdere -cessī -cessum| |yield, withdraw
+664|664|hōra -ae f.| |hour
+665|665|vetō -āre vetuī vetītum| |forbid
+666|666|cohors cohortis f.| |cohort, band, troop
+667|667|gīgnō gīgnere genuī genitum| |beget, bear, bring forth
+668|668|superō -āre| |overcome, surpass, defeat
+669|669|maestus -a -um| |sad, sorrowful; depressing
+670|670|meminī meminisse| |remember, recollect
+671|671|impleō -ēre -plēvī -plētum| |fill in, fill up
+672|672|māgnitūdō -inis f.| |greatness, size
+673|673|vacuus -a -um| |empty
+674|674|vagus -a -um| |wandering, shifting
+675|675|vulgus -ī n. and m.| |the common people
+676|676|deficiō -ficere -fēcī -fectum| |fail, give out; revolt from
+677|677|occurrō -currere -cucurrī -cursum| |run to meet; come into one’s mind
+678|678|statuō -ere -uī -ūtum| |set up, determine
+679|679|ideō| |for this reason
+680|680|praemium -ī n.| |bounty, reward
+681|681|praetereā| |besides, moreover
+682|682|tertius -a -um| |third
+683|683|supplicium -ī n.| |punishment, penalty
+684|684|vātēs -is m.| |poet, bard
+685|685|astrum -ī n.| |star; constellation
+686|686|undique| |from all sides, on all sides
+687|687|canis -is m./f.| |dog
+688|688|ēdō ēdere ēdidī ēditum| |put forth, state, explain
+689|689|fateor fatērī fassus sum| |admit, confess; profess, declare; assent, say yes
+690|690|amīcitia -ae f.| |friendship
+691|691|aureus -a -um| |golden; splendid
+692|692|candidus -a -um| |white, fair
+693|693|interim| |meanwhile
+694|694|frūstrā| |in vain
+695|695|lateō latēre latuī| |lie hidden, be hidden
+696|696|os ossis n.| |bone
+697|697|sēcūrus -a -um| |free from care, tranquil; careless
+698|698|conveniō -venīre -vēnī -ventum| |assemble, meet; agree
+699|699|interficiō -ficere -fēcī -fectum| |kill
+700|700|appellō -pellāre| |call, address, name
+701|701|dolus -ī m.| |artifice, device, trick
+702|702|permittō -mittere -mīsī -missum| |yield, allow, permit
+703|703|spīritus -ūs m.| |breath, life, spirit
+704|704|intrā| |within (+ acc.)
+705|705|terreō terrēre terruī territum| |terrify, frighten
+706|706|fōns fontis m.| |spring, fountain
+707|707|invidia -ae f.| |envy, jealousy, hatred
+708|708|pugnō -āre| |fight
+709|709|augeō augēre auxī auctum| |increase
+710|710|littera -ae f.| |letter, (pl.) literature
+711|711|moneō monēre monuī monitum| |warn, advise
+712|712|dīvitiae -ārum f. pl.| |riches, wealth
+713|713|experior -perīrī -pertus sum| |try thoroughly, test, experience
+714|714|superī -ōrum m. pl.| |those above, i.e. the gods
+715|715|ōtium -ī n.| |leisure
+716|716|vestīgium -ī n.| |footstep, footprint, track
+717|717|sinō sinere sīvī situm| |allow, let go
+718|718|decet decēre decuīt| |it is right, proper, fitting (+ acc. + infin.)
+719|719|effundō -fundere -fūdī -fūsum| |pour out
+720|720|prōmittō -mittere -mīsī -missum| |send forth, offer
+721|721|fingō fingere fīnxī fīctum| |shape; invent
+722|722|respicio -ere -spēxī -spectum| |look back, regard, consider
+723|723|imperātor -ōris m.| |commander
+724|724|vacō vacāre| |be empty, open, unoccupied
+725|725|color -ōris m.| |color
+726|726|discēdō -ere -cessī -cessum| |go away, depart
+727|727|gaudium -ī n.| |delight, joy, pleasure
+728|728|caecus -a -um| |blind, unseeing; dark, obscure
+729|729|libet libēre libuit or libitum est| |it is pleasing (+ dat. + infin.)
+730|730|centum| |one hundred
+731|731|cōnstō -stāre -stitī| |agree; constat, it is established that (+ acc. and infin.)
+732|732|lingua -ae f.| |tongue; language
+733|733|multitūdō -inis f.| |multitude, number
+734|734|aeternus -a -um| |everlasting, eternal
+735|735|circā| |around (adv. and prep. +acc.)
+736|736|ōrātiō -ōnis f.| |speech, address
+737|737|potestās -ātis f.| |power
+738|738|tardus -a -um| |slow, sluggish, lingering
+739|739|for fārī fātus sum| |report, say
+740|740|humus -ī f.| |ground; humī: on the ground
+741|741|testis -is m.| |witness
+742|742|īnferō īnferre intulī illātum| |bring upon, against; bellum īnferre: make war on
+743|743|cūrō -āre| |watch over, look after, care for (+ acc.)
+744|744|aes aeris n.| |copper, bronze
+745|745|celer -is -e| |swift
+746|746|prōcēdō -cēdere -cessī -cessum| |go forth, advance
+747|747|mēnsa -ae f.| |table
+748|748|pius -a -um| |dutiful, devoted, just, pious
+749|749|iūdicium -ī n.| |judgment, decision, trial
+750|750|victōria -ae f.| |victory
+751|751|damnō -āre| |condemn
+752|752|rārus -a -um| |wide apart, loose, thin; rare, seldom
+753|753|tempestas -tātis f.| |period of time, season; bad weather, storm
+754|754|imāgō -inis f.| |image, form, figure
+755|755|ōrō -āre| |pray
+756|756|praeter| |by, along, past; besides, except (+ acc.)
+757|757|cōnsulō -sulere -suluī -sultum| |consult, plan (+ acc.); consider the interests of (+dat)
+758|758|iterum| |again
+759|759|porta -ae f.| |gate
+760|760|intersum -esse -fuī| |to be between; take part in, attend (+dat.); interest, it is in the interest of (+ gen.)
+761|761|libīdō -inis f.| |passion, lust
+762|762|sustineō sustinēre sustinuī sustentum| |hold up, sustain
+763|763|aliquandō| |at some time, at length
+764|764|māiōrēs māiōrum m.| |ancestors
+765|765|reperiō -perīre -pperī -pertum| |find, find out
+766|766|intrō -āre| |enter
+767|767|pietās -tātis f.| |sense of duty, devotion, esp. between parents and children
+768|768|barbarus -ī m.| |foreigner, barbarian
+769|769|culpa -ae f.| |guilt, fault, blame
+770|770|iūstus -a -um| |right, just, fair
+771|771|dōnec| |until
+772|772|fluō fluere fluxī fluxum| |flow
+773|773|necesse (indecl. adj.)| |necessary
+774|774|reor rērī rātus sum| |think, imagine, suppose, deem
+775|775|tenebrae -brārum f. pl.| |darkness, the shadows
+776|776|saeculum -ī n.| |generation, age, century
+777|777|dīmittō -mittere -mīsī -missum| |send away
+778|778|licet| |even though
+779|779|cinis cineris m./f.| |ashes, embers
+780|780|cōnsistō -sistere -stitī| |take position; consist in, be composed of
+781|781|recēns -ntis| |fresh, new
+782|782|aliter| |otherwise, differently
+783|783|laedō laedere laesī laesum| |injure by striking, hurt
+784|784|probō -āre| |approve, prove; convince one (dat.) of a thing (acc.)
+785|785|doleō -ēre doluī| |feel pain or grief, grieve
+786|786|quārē| |how? why?
+787|787|antequam| |before
+788|788|reliquus -a -um| |remaining, rest
+789|789|semel| |once
+790|790|ōdī ōdisse| |hate
+791|791|sīcut| |just as
+792|792|peccō -āre| |commit a wrong, injure
+793|793|sēnsus -ūs m.| |feeling, emotion, sense
+794|794|exsilium -ī n.| |exile, banishment
+795|795|cor cordis n.| |heart; cordī est, it is pleasing to (+ dat.)
+796|796|dēnique| |finally
+797|797|sapientia -ae f.| |wisdom
+798|798|statim| |immediately
+799|799|accidō -cidere -cidī| |fall; happen
+800|800|dēcernō -cernere -crēvī -crētum| |determine, decide
+801|801|occīdō -cīdere -cīdī -cīsum| |kill, cut down
+802|802|dēscendō -scendere -scendī -scēnsum| |climb down, descend
+803|803|hiems hiemis f.| |winter
+804|804|contineō -tinēre -tinuī -tentum| |contain, restrain
+805|805|dēferō -ferre -tulī -lātum| |carry away, report
+806|806|oportet -ēre -uit| |it is proper, right (+ acc. + infin.)
+807|807|tribūnus -ī m.| |tribune, title of various Roman officials, as mīlitum, plēbis, aerāriī
+808|808|bōs bovis m.| |ox; gen. pl. boum
+809|809|īrāscor īrāscī īrātus sum| |grow angry; īrātus -a -um: angry
+810|810|aeger aegra aegrum| |sick
+811|811|forum -ī n.| |market-place, forum
+812|812|offerō offerre obtulī oblātum| |present, offer, expose
+813|813|revocō -āre| |call back, recall
+814|814|cingō cingere cīnxī cīnctum| |encircle, surround, gird
+815|815|integer -gra -grum:| |untouched, fresh, complete, whole
+816|816|validus -a -um| |strong
+817|817|alō alere aluī alitum| |nourish
+818|818|flōs flōris m.| |flower, bloom
+819|819|īctus -ūs m.| |blow, stroke
+820|820|colligō -ere -lēgī -lēctum| |gather together, collect
+821|821|pergō pergere perrēxī perrēctum| |continue, proceed; awaken
+822|822|praesēns -ntis| |present, in person, ready
+823|823|rēctus -a -um| |straight, direct
+824|824|lātus -a -um| |broad, wide
+825|825|praeceptum -ī n.| |rule, precept; command
+826|826|recēdō -cēdere -cessī -cessum| |step back, recoil, recede, withdraw
+827|827|utrum| |whether; utrum ... an: whether ... or
+828|828|famēs -is f.| |hunger, famine
+829|829|pariō parere peperī partum| |bring forth, give birth to; accomplish
+830|830|appāreō -ēre -uī| |appear, become visible
+831|831|quōmodo| |in what way, how?
+832|832|error -ōris m.| |wandering; error, mistake
+833|833|forsitan, fortasse| |perhaps, perchance
+834|834|convertō -vertere -vertī -versum| |turn about, turn, change
+835|835|proficīscor -ficīscī -fectus sum| |set forth, go
+836|836|secundus -a -um| |following; favorable; (as numeral) second
+837|837|aperiō aperīre aperuī apertum| |open
+838|838|castus -a -um| |pure, spotless, chaste
+839|839|iūdex iūdicis m.| |judge, juror
+840|840|lapis lapidis m.| |stone
+841|841|nimis or nimium| |excessively
+842|842|onus oneris n.| |load, burden
+843|843|opera -ae f.| |labor, activity, work
+844|844|pauper -eris| |poor, lowly
+845|845|āēr āeris m.| |air
+846|846|negōtium -ī n.| |business
+847|847|pāreō pārēre pāruī| |obey
+848|848|subitō| |suddenly, unexpectedly
+849|849|argentum -ī n.| |silver, money
+850|850|ūtilis -e| |useful
+851|851|aethēr aetheris n.| |pure upper air, ether, heaven, sky
+852|852|mereō merēre meruī meritum| |deserve, merit; serve as a soldier
+853|853|portō -āre| |carry a load
+854|854|proprius -a -um| |one’s own, peculiar
+855|855|avis -is f.| |bird
+856|856|vanus -a -um| |empty; false, deceitful
+857|857|māteria -ae f.| |material, subject matter; timber, lumber
+858|858|paucī -ae -a| |few, a few
+859|859|voluntās -ātis f.| |wish, desire
+860|860|ēgregius -a -um| |distinguished, uncommon
+861|861|difficilis -e| |not easy, hard, difficult
+862|862|gladius -ī m.| |sword
+863|863|cibus -ī m.| |food
+864|864|certō -āre| |decide by contest; fight, compete, vie
+865|865|initium -ī n.:| |beginning
+866|866|pertineō -tinēre -tinuī| |extend over, reach; refer to, pertain to, be the business of
+867|867|quattuor| |four
+868|868|turbō -āre| |disturb, confuse
+869|869|cōnsūmō -sūmere -sūmpsī -sūmptum| |to use up, consume
+870|870|corrumpō -rumpere -rūpī -ruptum| |break up, destroy, ruin
+871|871|incidō incidere incidī| |fall upon, fall into; happen
+872|872|paulō, paulum| |to only a small extent, slightly, a little
+873|873|hospes hospitis m.| |guest, guest-friend; stranger; host
+874|874|rīdeō -ēre rīsī rīsum| |laugh, laugh at
+875|875|aevum -i n.| |eternity; lifetime, age
+876|876|audāx audācis| |bold, daring; reckless
+877|877|posterus -a -um| |next, later
+878|878|praetor -ōris m.| |praetor, one of the chief Roman magistrates
+879|879|rūs rūris n.| |country
+880|880|differō differre distulī dīlātum| |scatter; publish, divulge; differ; defer, postpone
+881|881|vītō -āre| |avoid, shun
+882|882|prīvātus -a -um| |personal, private
+883|883|serviō -īre| |be a slave, serve (+ dat.)
+884|884|vereor verērī veritus sum| |fear, stand in awe of
+885|885|ingredior -gredī -gressus sum:| |step in, enter
+886|886|addūcō -ere -dūxī -ductum| |lead to, induce
+887|887|hortor hortārī hortātus sum| |urge strongly, advise, exhort
+888|888|reus -ī m.| |defendant
+889|889|scīlicet| |certainly, of course
+890|890|comparō -āre| |get ready, provide; compare
+891|891|perpetuus -a -um| |unbroken, perpetual
+892|892|dēsīderō -āre| |long for, desire greatly
+893|893|celebrō -āre| |frequent, throng, crowd
+894|894|cōnficiō -ficere -fēcī -fectum| |complete, accomplish; destroy, kill, consume
+895|895|intendō -tendere -tendī -tentum:| |stretch out, strain
+896|896|iūrō -āre| |take an oath, swear; iūs iūrandum, oath
+897|897|sōlum| |only, merely
+898|898|auctōritās -ātis f.| |influence, clout, authority
+899|899|iaciō iacere iēcī iactum| |throw, hurl
+900|900|labōrō -āre| |toil, work; be in trouble or distress
+901|901|liber librī m.| |book
+902|902|lūna -ae f.| |moon
+903|903|prōtinus| |at once, forthwith
+904|904|aequē| |equally
+905|905|cōnor cōnārī cōnātus sum| |try, attempt
+906|906|cupīdō -inis f.| |desire, eagerness, craving
+907|907|ferē| |almost
+908|908|īnsula -ae f.:| |island
+909|909|fīlia -ae f.; fīlius -ī m.| |daughter; son
+910|910|narrō -āre| |relate, recount
+911|911|necessitās -tātis f.| |necessity, need
+912|912|ēgredior ēgredī ēgressus sum| |stride out, depart, disembark from (+ abl.)
+913|913|poēta -ae m.| |poet
+914|914|decem| |ten
+915|915|amplus -a -um| |large, spacious
+916|916|aptus -a -um| |fit, suitable
+917|917|cōnsequor -sequī -secūtus sum| |follow up, overtake, attain
+918|918|frequēns -ntis| |in large numbers, often
+919|919|nūntius -ī m.| |messenger; news
+920|920|condīciō -ōnis f.| |agreement, condition
+921|921|convīvium -iī n.| |banquet, feast
+922|922|foedus -a -um| |foul
+923|923|fruor fruī frūctus sum| |enjoy the produce of, profit by, use (+ abl.)
+924|924|num| |interrogative particle implying negative answer
+925|925|albus -a -um| |white
+926|926|damnum -ī n.| |damage, injury
+927|927|frūctus -ūs m.| |fruit, crops; enjoyment, delight
+928|928|cēnseō cēnsēre cēnsuī cēnsum| |assess, rate; think, decide
+929|929|prōdō prōdere prōdidī prōditum| |publish, hand down; give over, betray
+930|930|prōpōnō -pōnere -posuī -positum| |put forth, propose, present
+931|931|īnstituō -stituere -stituī -stitūtum:| |undertake; equip
+932|932|item| |likewise
+933|933|magister magistrī m.| |master, chief
+934|934|stella -ae f.| |star
+935|935|ēdūcō -dūcere -dūxī -ductum| |lead forth
+936|936|frūmentum -ī n.| |grain
+937|937|suscipiō -cipere -cēpī ceptum| |take up
+938|938|quasi| |as if
+939|939|sacerdōs -dōtis m./f.| |priest, priestess
+940|940|vīcīnus -a -um| |neighboring, near
+941|941|caveō cavēre cāvī cautum| |be on guard, beware
+942|942|ēligō ēligere ēlēgī ēlēctum| |pick out, select
+943|943|familia -ae f.| |household, family
+944|944|paene| |almost
+945|945|praecipiō -cipere -cēpī -ceptum| |anticipate, advise, warn
+946|946|sānus -a -um| |sound, sane
+947|947|potis -e| |powerful, able
+948|948|prīncipium -ī n.| |beginning
+949|949|sepulcrum -ī n.| |place of burial, tomb, grave
+950|950|mortālis -e| |liable to death, mortal; (as subst.) a mortal
+951|951|epistula -ae f.| |letter
+952|952|inimīcus -a -um:| |unfriendly; (as subst.) enemy
+953|953|interrogō -āre| |put a question to, ask (+ acc.)
+954|954|cōnsuētūdo -inis f.| |custom, habit
+955|955|illūc| |to that place
+956|956|dīgnitās -ātis f.| |worth, reputation, honor
+957|957|fugō -āre| |put to flight
+958|958|afficiō -ficere -fēcī -fectum| |affect, visit with (+ abl.)
+959|959|adhibeō -hibēre -hibuī -hibitum| |apply
+960|960|caelestis -e| |from or of heaven; caelestēs, the gods
+961|961|mulier -eris f.| |woman
+962|962|dīvus -a -um| |divine, godlike; (as subst.) a god
+963|963|arbitror arbitrārī arbitrātus sum| |consider, think
+964|964|posteā| |afterwards
+965|965|aedēs -is f.| |building; (pl.) house
+966|966|fābula -ae f.| |account, tale, story
+967|967|celeriter| |quickly
+968|968|plērus- plēra- plērumque| |the greater part, very many, most, the majority
+969|969|quiēscō quiēscere quiēvī quiētum| |keep quiet; sleep
+970|970|quotiēns| |interr. how many times? how often? rel. as often as, whenever
+971|971|scientia -ae f.| |knowledge
+972|972|cōnfiteor cōnfitērī cōnfessus sum| |admit (a fact), confess (a crime); reveal, disclose
+973|973|dīligō -ligere -lēxī -lēctum| |choose, cherish, love
+974|974|plērumque| |generally
+975|975|dormiō -īre| |sleep
+976|976|volucris -is f./m.| |bird
+977|977|volucer -cris -cre| |flying
+978|978|creō -āre| |produce, create; elect, choose
+979|979|fidēlis -e| |faithful
+980|980|indicō -āre| |point out, show, make known
+981|981|hodiē| |today
+982|982|disciplīna -ae f.| |training, instruction; learning, discipline
+983|983|vērē| |truly
+984|984|aegrē| |with difficulty
+985|985|fore| |will be
+986|986|advertō -vertere -vertī -versum| |turn towards
+987|987|adveniō -īre -vēnī -ventum| |come to, arrive at
+988|988|pendō pendere pependī pēnsum| |weigh, hang, suspend; pay
+989|989|studeō -ēre -uī| |be eager, be zealous, care for (+ dat.)
+990|990|ascendō -ere -scendī -scēnsum| |climb up, ascend
+991|991|vulgō| |commonly
+992|992|breviter| |briefly
+993|993|fors fortis f.| |chance
+994|994|fēlīciter| |luckily
+995|995|revertō -vertere -vertī| |turn back
+996|996|ēdīcō -dīcere -dīxī -dictum| |declare
+997|997|mundus -a -um| |clean, neat, elegant

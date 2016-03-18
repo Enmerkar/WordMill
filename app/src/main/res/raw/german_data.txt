@@ -1,10 +1,10 @@
-1;1;der Baum;äu-e, -es;tree
-2;2;das Meer;-e, -es;sea
-3;3;die Frau;die Frauen, der Frau;woman
-4;4;das Auto;die Autos, des Autos;car
-5;5;der Mensch;die Menschen, des Menschen;human
-6;6;die Tasse;die Tassen, der Tasse;cup
-7;7;fahren;fährt, fuhr, ist gefahren;travel
-8;8;verlegen;verlegt, hat verlegt;to move, shift
-9;9;verlegen;;embarassed
-10;10;gehen;ging, ist gegangen;to go
+1|1|der Baum|äu-e, -es|tree
+2|2|das Meer|-e, -es|sea
+3|3|die Frau|die Frauen, der Frau|woman
+4|4|das Auto|die Autos, des Autos|car
+5|5|der Mensch|die Menschen, des Menschen|human
+6|6|die Tasse|die Tassen, der Tasse|cup
+7|7|fahren|fährt, fuhr, ist gefahren|travel
+8|8|verlegen|verlegt, hat verlegt|to move, shift
+9|9|verlegen||embarassed
+10|10|gehen|ging, ist gegangen|to go

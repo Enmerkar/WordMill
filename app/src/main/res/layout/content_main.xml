@@ -24,11 +24,29 @@
             android:layout_height="wrap_content"
             android:text="@string/main_message"/>
 
+        <TextView android:id="@+id/main_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_total"
+            android:layout_below="@id/main_message"/>
+
+        <TextView android:id="@+id/main_learned"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/words_learned"
+            android:layout_below="@id/main_total"/>
+
+        <TextView android:id="@+id/main_lapsed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/words_lapsed"
+            android:layout_below="@id/main_learned" />
+
         <TextView android:id="@+id/main_passed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/main_revised"
-            android:layout_below="@id/main_message"/>
+            android:layout_below="@id/main_lapsed"/>
 
         <TextView android:id="@+id/main_failed"
             android:layout_width="wrap_content"

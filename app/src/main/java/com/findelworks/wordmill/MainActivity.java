@@ -45,6 +45,8 @@ import android.content.res.Resources;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String DIRECTION_PREFERENCE = "DIRECTION_PREFERENCE";
     private static final String BUCKET_SIZE_PREFERENCE = "BUCKET_SIZE_PREFERENCE";
+    private static final String DAILY_LIMIT_PREFERENCE = "DAILY_LIMIT_PREFERENCE";
     private static final String LAPSE_MODE_PREFERENCE = "LAPSE_MODE_PREFERENCE";
     private static final String FULL_MODE_PREFERENCE = "FULL_MODE_PREFERENCE";
 
@@ -77,15 +80,20 @@ public class MainActivity extends AppCompatActivity
     private static final String ODD_MODE = "ODD_MODE";
     private static final String WORDS_ENCOUNTERED = "WORDS_ENCOUNTERED";
     private static final String WORDS_LAPSED = "WORDS_LAPSED";
+    private static final String WORDS_TOTAL = "WORDS_TOTAL";
+    private static final String NEW_WORDS_TODAY = "NEW_WORDS_TODAY";
 
     private static final String DEFAULT_LANGUAGE = "LATIN";
     private static final int DEFAULT_LAPSE_DECREMENT_HOUR = 3;
 
     private static final int DEFAULT_BUCKET_SIZE = 12;
+    private static final int DEFAULT_DAILY_LIMIT = 20;
     private static final boolean DEFAULT_DIRECTION = true;
     private static final boolean DEFAULT_FULL_MODE = true;
     private static final int DEFAULT_WORDS_ENCOUNTERED = 0;
     private static final int DEFAULT_WORDS_LAPSED = 0;
+    private static final int DEFAULT_WORDS_TOTAL = 2000;
+    private static final int DEFAULT_NEW_WORDS_TODAY = 0;
 
     private static SharedPreferences global_preferences;
     private static SharedPreferences german_preferences;
@@ -93,16 +101,18 @@ public class MainActivity extends AppCompatActivity
     private static SharedPreferences attic_preferences;
 
     private static String active_language;
+    private static int word_total;
     private static String table_name;
     private static int lapse_decrement_hour;
-
     private static long last_decrement_time;
     private static boolean forward_mode;
     private static int bucket_size;
+    private static int daily_limit;
     private static String lapse_mode;
     private static boolean full_mode;
-    private static int words_encountered;
+    private static int words_learned;
     private static int words_lapsed;
+    private static int new_words;
 
     private static LanguageSQLiteOpenHelper langHelper;
     private static SQLiteDatabase writableDatabase;
@@ -112,6 +122,9 @@ public class MainActivity extends AppCompatActivity
     private static boolean newAtticFile;
 
     private static TextView main_message;
+    private static TextView main_total;
+    private static TextView main_learned;
+    private static TextView main_lapsed;
     private static TextView main_passed;
     private static TextView main_failed;
     private static TextView word_view;
@@ -178,6 +191,9 @@ public class MainActivity extends AppCompatActivity
 
         // Set view variables
         main_message = (TextView) findViewById(R.id.main_message);
+        main_total = (TextView) findViewById(R.id.main_total);
+        main_learned = (TextView) findViewById(R.id.main_learned);
+        main_lapsed = (TextView) findViewById(R.id.main_lapsed);
         main_passed = (TextView) findViewById(R.id.main_passed);
         main_failed = (TextView) findViewById(R.id.main_failed);
         word_view = (TextView) findViewById(R.id.view_word);
@@ -214,12 +230,14 @@ public class MainActivity extends AppCompatActivity
 
         // Restore previously active language
         try {
-            active_language = global_preferences.getString(ACTIVE_LANGUAGE, GERMAN_LANGUAGE);
+            active_language = global_preferences.getString(ACTIVE_LANGUAGE, ATTIC_LANGUAGE);
             lapse_decrement_hour = global_preferences.getInt(LAPSE_DECREMENT_HOUR_PREFERENCE, DEFAULT_LAPSE_DECREMENT_HOUR);
+            daily_limit = global_preferences.getInt(DAILY_LIMIT_PREFERENCE, DEFAULT_DAILY_LIMIT);
         } catch (ClassCastException e) {
             SharedPreferences.Editor editor = global_preferences.edit();
             editor.putString(ACTIVE_LANGUAGE, DEFAULT_LANGUAGE);
             editor.putInt(LAPSE_DECREMENT_HOUR_PREFERENCE, DEFAULT_LAPSE_DECREMENT_HOUR);
+            editor.putInt(DAILY_LIMIT_PREFERENCE, DEFAULT_DAILY_LIMIT);
             editor.apply();
             active_language = DEFAULT_LANGUAGE;
         }
@@ -331,8 +349,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
 
         switch (id) {
             case R.id.nav_german: setLanguage(GERMAN_LANGUAGE); break;
@@ -345,6 +361,8 @@ public class MainActivity extends AppCompatActivity
             default: break;
         }
 
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
         return true;
 
     }
@@ -354,7 +372,7 @@ public class MainActivity extends AppCompatActivity
         Date now = new Date();
         Long now_time = now.getTime();
 
-        switch (active_language) {
+        switch (language) {
             case GERMAN_LANGUAGE:
                 active_language = GERMAN_LANGUAGE;
                 table_name = LanguageSQLiteOpenHelper.TABLE_NAME_GERMAN;
@@ -364,7 +382,11 @@ public class MainActivity extends AppCompatActivity
                     bucket_size = german_preferences.getInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
                     lapse_mode = german_preferences.getString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
                     full_mode = german_preferences.getBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
+                    words_learned = german_preferences.getInt(WORDS_ENCOUNTERED, DEFAULT_WORDS_ENCOUNTERED);
+                    words_lapsed = german_preferences.getInt(WORDS_LAPSED, DEFAULT_WORDS_LAPSED);
+                    word_total = german_preferences.getInt(WORDS_TOTAL, DEFAULT_WORDS_TOTAL);
                     decrementLapseDays(now_time);
+                    new_words = german_preferences.getInt(NEW_WORDS_TODAY, DEFAULT_NEW_WORDS_TODAY);
                 } catch (ClassCastException e) {
                     SharedPreferences.Editor german_editor = german_preferences.edit();
                     german_editor.putLong(LAST_DECREMENT_TIME, now_time);
@@ -374,6 +396,8 @@ public class MainActivity extends AppCompatActivity
                     german_editor.putBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
                     german_editor.putInt(WORDS_ENCOUNTERED, DEFAULT_WORDS_ENCOUNTERED);
                     german_editor.putInt(WORDS_LAPSED, DEFAULT_WORDS_LAPSED);
+                    german_editor.putInt(WORDS_TOTAL, DEFAULT_WORDS_TOTAL);
+                    german_editor.putInt(NEW_WORDS_TODAY, DEFAULT_NEW_WORDS_TODAY);
                     german_editor.apply();
                 }
                 break;
@@ -386,7 +410,11 @@ public class MainActivity extends AppCompatActivity
                     bucket_size = latin_preferences.getInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
                     lapse_mode = latin_preferences.getString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
                     full_mode = latin_preferences.getBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
+                    words_learned = latin_preferences.getInt(WORDS_ENCOUNTERED, DEFAULT_WORDS_ENCOUNTERED);
+                    words_lapsed = latin_preferences.getInt(WORDS_LAPSED, DEFAULT_WORDS_LAPSED);
+                    word_total = latin_preferences.getInt(WORDS_TOTAL, DEFAULT_WORDS_TOTAL);
                     decrementLapseDays(now_time);
+                    new_words = latin_preferences.getInt(NEW_WORDS_TODAY, DEFAULT_NEW_WORDS_TODAY);
                 } catch (ClassCastException e) {
                     SharedPreferences.Editor latin_editor = latin_preferences.edit();
                     latin_editor.putLong(LAST_DECREMENT_TIME, now_time);
@@ -396,6 +424,8 @@ public class MainActivity extends AppCompatActivity
                     latin_editor.putBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
                     latin_editor.putInt(WORDS_ENCOUNTERED, DEFAULT_WORDS_ENCOUNTERED);
                     latin_editor.putInt(WORDS_LAPSED, DEFAULT_WORDS_LAPSED);
+                    latin_editor.putInt(WORDS_TOTAL, DEFAULT_WORDS_TOTAL);
+                    latin_editor.putInt(NEW_WORDS_TODAY, DEFAULT_NEW_WORDS_TODAY);
                     latin_editor.apply();
                 }
                 break;
@@ -408,7 +438,11 @@ public class MainActivity extends AppCompatActivity
                     bucket_size = attic_preferences.getInt(BUCKET_SIZE_PREFERENCE, DEFAULT_BUCKET_SIZE);
                     lapse_mode = attic_preferences.getString(LAPSE_MODE_PREFERENCE, FIBONACCI_MODE);
                     full_mode = attic_preferences.getBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
+                    words_learned = attic_preferences.getInt(WORDS_ENCOUNTERED, DEFAULT_WORDS_ENCOUNTERED);
+                    words_lapsed = attic_preferences.getInt(WORDS_LAPSED, DEFAULT_WORDS_LAPSED);
+                    word_total = attic_preferences.getInt(WORDS_TOTAL, DEFAULT_WORDS_TOTAL);
                     decrementLapseDays(now_time);
+                    new_words = attic_preferences.getInt(NEW_WORDS_TODAY, DEFAULT_NEW_WORDS_TODAY);
                 } catch (ClassCastException e) {
                     SharedPreferences.Editor attic_editor = attic_preferences.edit();
                     attic_editor.putLong(LAST_DECREMENT_TIME, now_time);
@@ -418,6 +452,8 @@ public class MainActivity extends AppCompatActivity
                     attic_editor.putBoolean(FULL_MODE_PREFERENCE, DEFAULT_FULL_MODE);
                     attic_editor.putInt(WORDS_ENCOUNTERED, DEFAULT_WORDS_ENCOUNTERED);
                     attic_editor.putInt(WORDS_LAPSED, DEFAULT_WORDS_LAPSED);
+                    attic_editor.putInt(WORDS_TOTAL, DEFAULT_WORDS_TOTAL);
+                    attic_editor.putInt(NEW_WORDS_TODAY, DEFAULT_NEW_WORDS_TODAY);
                     attic_editor.apply();
                 }
                 break;
@@ -427,11 +463,11 @@ public class MainActivity extends AppCompatActivity
         editor.putString(ACTIVE_LANGUAGE, active_language);
         editor.apply();
 
-        drawButton();
+        setMainScreen();
 
     }
 
-    public static void decrementLapseDays(long now) {
+    public static void decrementLapseDays (long now) {
 
         // This needs to be updated to account for lapse_time_preference
         long difference = now - last_decrement_time;
@@ -455,16 +491,19 @@ public class MainActivity extends AppCompatActivity
                 case GERMAN_LANGUAGE:
                     SharedPreferences.Editor german_editor = german_preferences.edit();
                     german_editor.putLong(LAST_DECREMENT_TIME, now);
+                    german_editor.putInt(NEW_WORDS_TODAY, 0);
                     german_editor.apply();
                     break;
                 case LATIN_LANGUAGE:
                     SharedPreferences.Editor latin_editor = latin_preferences.edit();
                     latin_editor.putLong(LAST_DECREMENT_TIME, now);
+                    latin_editor.putInt(NEW_WORDS_TODAY, 0);
                     latin_editor.apply();
                     break;
                 case ATTIC_LANGUAGE:
                     SharedPreferences.Editor attic_editor = attic_preferences.edit();
                     attic_editor.putLong(LAST_DECREMENT_TIME, now);
+                    attic_editor.putInt(NEW_WORDS_TODAY, 0);
                     attic_editor.apply();
                     break;
             }
@@ -498,30 +537,51 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void drawButton() {
+    public void setMainScreen () {
+
+        String learnedWordQuery, lapsedWordQuery;
+
+        if (forward_mode) {
+            learnedWordQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 0";
+            lapsedWordQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 0 AND " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " < 1";
+        } else {
+            learnedWordQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 0";
+            lapsedWordQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 0 AND " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " < 1";
+        }
+
+        Cursor learnedWordCursor = writableDatabase.rawQuery(learnedWordQuery, null);
+        Cursor lapsedWordCursor = writableDatabase.rawQuery(lapsedWordQuery, null);
+
+        learnedWordCursor.moveToFirst();
+        lapsedWordCursor.moveToFirst();
+
+        words_learned = learnedWordCursor.getInt(0);
+        words_lapsed = lapsedWordCursor.getInt(0);
+
+        learnedWordCursor.close();
+        lapsedWordCursor.close();
+
+        String total_message = getString(R.string.main_total) + " " + Integer.toString(word_total);
+        String learned_message = getString(R.string.words_learned) + " " + Integer.toString(words_learned);
+        String lapsed_message = getString(R.string.words_lapsed) + " " + Integer.toString(words_lapsed);
+        String yes_message = getString(R.string.words_passed) + " " + Integer.toString(yes_count);
+        String no_message = getString(R.string.words_failed) + " " + Integer.toString(no_count);
+
+        main_message.setText(active_language);
+        main_total.setText(total_message);
+        main_learned.setText(learned_message);
+        main_lapsed.setText(lapsed_message);
+        main_passed.setText(yes_message);
+        main_failed.setText(no_message);
+
+        drawButton(words_learned, words_lapsed);
+
+    }
+
+    public void drawButton(double learned, double lapsed) {
 
         // Clear the canvas
         //c.drawColor(ContextCompat.getColor(this, R.color.colorBackground));
-
-        String learnedQuery, lapsedQuery;
-        double learned, lapsed;
-
-        if (forward_mode) {
-            learnedQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 0";
-            lapsedQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE "+ LanguageSQLiteOpenHelper.COLUMN_FLEVEL + " > 0" + " AND " + LanguageSQLiteOpenHelper.COLUMN_FLAPSE + " < 1";
-        } else {
-            learnedQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 0";
-            lapsedQuery = "SELECT COUNT(*) FROM " + table_name + " WHERE " + LanguageSQLiteOpenHelper.COLUMN_BLEVEL + " > 0" + " AND " + LanguageSQLiteOpenHelper.COLUMN_BLAPSE + " < 1";
-        }
-
-        Cursor learnedCursor = writableDatabase.rawQuery(learnedQuery, null);
-        Cursor lapsedCursor = writableDatabase.rawQuery(lapsedQuery, null);
-
-        learnedCursor.moveToFirst();
-        lapsedCursor.moveToFirst();
-
-        learned = learnedCursor.getDouble(0);
-        lapsed = lapsedCursor.getDouble(0);
 
         learnedArcStart = 270;
         learnedArcSweep = Math.round(360*((learned-lapsed)/learned));
@@ -668,7 +728,10 @@ public class MainActivity extends AppCompatActivity
         try {
 
             // Copy in any trailing unattempted words into the database
-            while ((inputLineLang = brLang.readLine()) != null) {
+            // Limited by daily new word preference
+            while ((inputLineLang = brLang.readLine()) != null && new_words < daily_limit) {
+
+                new_words = new_words++;
 
                 inputArrayLang = inputLineLang.split("\\|");
 
@@ -702,6 +765,31 @@ public class MainActivity extends AppCompatActivity
 
         }
 
+        // Get total word count
+        Cursor c = writableDatabase.rawQuery("SELECT COUNT(*) FROM " + table_name, null);
+        c.moveToFirst();
+        word_total = c.getInt(0);
+        c.close();
+
+        // Add to shared_preferences of language
+        switch (language) {
+            case GERMAN_LANGUAGE:
+                SharedPreferences.Editor german_editor = german_preferences.edit();
+                german_editor.putInt(WORDS_TOTAL, word_total);
+                german_editor.apply();
+                break;
+            case LATIN_LANGUAGE:
+                SharedPreferences.Editor latin_editor = latin_preferences.edit();
+                latin_editor.putInt(WORDS_TOTAL, word_total);
+                latin_editor.apply();
+                break;
+            case ATTIC_LANGUAGE:
+                SharedPreferences.Editor attic_editor = attic_preferences.edit();
+                attic_editor.putInt(WORDS_TOTAL, word_total);
+                attic_editor.apply();
+                break;
+            default: break;
+        }
     }
 
     public void beginRound() {
@@ -794,8 +882,17 @@ public class MainActivity extends AppCompatActivity
         if (round_shuffled.size() > 0) {
             askWord();
         } else {
-            // Begin a non-scoring round
-            practiceRound();
+
+            // Popup message explaining that no more words need to be revised
+            CharSequence text;
+            if (additional > 0) {
+                text = getString(R.string.fully_revised_toast);
+            } else {
+                text = getString(R.string.fully_learned_toast);
+            }
+            Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
+            toast.show();
+
         }
 
 
@@ -903,14 +1000,7 @@ public class MainActivity extends AppCompatActivity
 
     public void endRound() {
 
-        String yes_message = getString(R.string.words_passed) + " " + Integer.toString(yes_count);
-        String no_message = getString(R.string.words_failed) + " " + Integer.toString(no_count);
-
-        main_message.setText(R.string.round_complete);
-        main_passed.setText(yes_message);
-        main_failed.setText(no_message);
-
-        drawButton();
+        setMainScreen();
 
         // Show practice.xml layout
         findViewById(R.id.practice_page).setVisibility(View.GONE);
@@ -918,12 +1008,13 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    // DELETE> DO NOT USE.
     public void endPracticeRound() {
 
         main_message.setText(R.string.practice_complete);
         main_failed.setText(R.string.practice_message);
 
-        drawButton();
+        setMainScreen();
 
         // Show practice.xml layout
         findViewById(R.id.practice_page).setVisibility(View.GONE);
@@ -998,6 +1089,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    // DELETE THIS. DO NOT USE. DEFEATS THE PHILOSOPHY OF THE APP.
     // Only needed if the entire database has been learned.
     public void practiceRound() {
 
